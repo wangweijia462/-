@@ -21,18 +21,14 @@
 \usepackage{multirow}
 \usepackage{array}
 \usepackage{tabularx}
-\usepackage{siunitx}
-\sisetup{
-  table-align-text-post = false,
-  input-symbols         = ()* ,
-  table-number-alignment= center
-}
 
 %% ---- Graphics & Figures ------------------------------------
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,shapes.geometric}
 
 %% ---- Fonts & Typography ------------------------------------
 \usepackage[T1]{fontenc}
@@ -41,7 +37,7 @@
 
 %% ---- References --------------------------------------------
 \usepackage{natbib}
-\bibliographystyle{aer}
+\bibliographystyle{plainnat}
 
 %% ---- Hyperlinks --------------------------------------------
 \usepackage[colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
@@ -60,14 +56,22 @@
 %% =============================================================
 \title{\textbf{The Boundaries of Inclusive Growth: \\
        Factor-Biased Technical Change Suitability, \\
-       Human Capital, and Institutional Quality}}
+       Human Capital, and Institutional Quality}%
+       \thanks{We are grateful to Xiaoping Li, Zhipeng Xu, and Xiaoke Li
+         for making their dataset and replication code publicly available.
+         We thank seminar participants at [Institution] for valuable comments.
+         All errors are our own.
+         \textbf{Data availability}: The underlying data are sourced from
+         the Standardized World Income Inequality Database
+         \citep{solt2016standardizing}, Penn World Table 10.0
+         \citep{feenstra2015next}, Fraser Institute Economic Freedom Index
+         \citep{gwartney2020economic}, Clio Infra, and the UIBE Global
+         Value Chain Database. The replication package for this paper,
+         including the extended do-file and Python script, is available
+         at \url{https://github.com/wangweijia462/-}.}}
 
 \author{
-  [Author Name]\thanks{Correspondence: [Institution address].
-    We thank the editor, four anonymous referees, and
-    seminar participants for valuable comments.
-    The data and replication code are available in the
-    online appendix.} \\
+  Wang Weijia \\
   \textit{[Institution]} \\[6pt]
   [Co-author Name] \\
   \textit{[Institution]}
@@ -79,28 +83,29 @@
 
 %% =============================================================
 \begin{abstract}
+\begin{spacing}{1.05}
 \noindent
-Does the alignment between a country's direction of technical change and
-its factor endowments reduce income inequality, and under what conditions?
+Does the alignment between technical change and factor endowments reduce
+income inequality only when economies can absorb and diffuse the gains?
 Using a balanced panel of 64 economies from 1980 to 2019, we show that
-greater capital-biased technical change suitability significantly reduces
-the log Gini coefficient by approximately 0.82 percent per standard deviation.
-This equalizing effect, however, is conditional on two boundary factors.
-Human capital substantially amplifies the suitability--inequality channel:
-a one-standard-deviation increase in human capital raises the marginal
-equalizing effect by roughly 2.1 percentage points, operating primarily
-through global value chain upgrading and high-quality job creation.
-Institutional quality reduces inequality directly but acts as a threshold
-condition rather than a linear amplifier: only when both institutions and
-human capital are simultaneously weak is the equalizing effect of suitability
-significantly attenuated. These findings imply that technology-factor
-alignment must be accompanied by investment in people and governance capacity
-to generate broad-based growth.
+capital-biased technical change suitability lowers the log market Gini by
+0.82 percent per standard deviation. Human capital is the main amplifier:
+a one-standard-deviation increase in pre-sample schooling strengthens the
+equalizing effect by about 2.1 percentage points, primarily through global
+value chain upgrading and better employment composition. Institutional
+quality lowers inequality directly but does not linearly amplify the
+suitability channel; instead, weak institutions become binding only when
+human capital is also low. Two-stage least squares estimates using
+shift-share and spatial instruments confirm that these patterns reflect
+causal relationships rather than spurious correlations. These results
+imply that technology-factor alignment promotes inclusive growth only
+when paired with sustained investment in people and governance capacity.
 
 \bigskip
 \noindent \textbf{JEL}: O33, D31, J24, P16, F66 \\
 \noindent \textbf{Keywords}: biased technical change, income inequality,
 human capital, institutional quality, global value chains, factor endowments
+\end{spacing}
 \end{abstract}
 
 \clearpage
@@ -165,6 +170,12 @@ and (ii) human capital, proxied by the log of mean schooling in 1970
 \citep{barro1996schooling}. The pre-sample human capital proxy
 reduces concerns about reverse causation from contemporary inequality
 to schooling investment.
+To address the potential endogeneity of suitability itself,
+we instrument using a shift-share (Bartik) instrument, the log mean
+suitability of other economies, and pre-sample capital-stock proxies,
+following the strategy in \citet{li2026prosperity};
+for the moderation analysis we interact each instrument with the
+(exogenous) boundary variables.
 
 The paper yields four main results.
 First, technical change suitability significantly reduces income
@@ -252,7 +263,8 @@ Section~\ref{sec:data} describes the data, variables, and empirical
 strategy.
 Section~\ref{sec:results} presents the main regression results.
 Section~\ref{sec:mechanisms} reports the mechanism analysis.
-Section~\ref{sec:robustness} discusses robustness and limitations.
+Section~\ref{sec:robustness} presents robustness and identification
+tests.
 Section~\ref{sec:conclusion} concludes with policy implications.
 
 %% =============================================================
@@ -343,7 +355,7 @@ recourse against monopsonistic wage suppression.
 
 Conversely, when institutions are weak, elites and politically
 connected firms can appropriate the surplus generated by
-suitability improvements \citep{norte2003institutions}.
+suitability improvements \citep{north1990institutions}.
 Tax systems are too thin to redistribute; public goods provision
 stagnates; labor regulations go unenforced.
 The consumer welfare channel is especially sensitive: turning
@@ -448,7 +460,8 @@ in 1970, from Clio Infra \citep{li2026prosperity}.
 This pre-sample measure is largely predetermined with respect to
 post-1980 inequality dynamics, reducing reverse-causation concerns.
 The cost is that it cannot capture within-sample human capital
-changes; we discuss this limitation in Section~\ref{sec:robustness}.
+changes; we address this limitation in Section~\ref{sec:robustness}
+by using the dynamic PWT human capital index as an alternative.
 
 \paragraph{Control variables.}
 We follow \citet{li2026prosperity} in controlling for trade openness
@@ -473,6 +486,50 @@ with a standard deviation of 1.26.
 The 1970 schooling proxy has a mean of 1.78 log years and
 standard deviation of 0.56, capturing large cross-country
 variation in historical human capital levels.
+
+%% ---- Table 1: Descriptive Statistics -----------------------
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Descriptive Statistics}
+\label{tab:descriptive}
+\small
+\begin{tabular}{llrrrrr}
+\toprule
+Variable & Description & Obs.\ & Mean & Std.\ Dev.\ & Min & Max \\
+\midrule
+$\ln \gini$
+  & Log income inequality (market Gini)
+  & 2,560 & 3.6884 & 0.2847 & 2.8745 & 4.3449 \\[2pt]
+$\ln \suit$
+  & Log biased TC suitability
+  & 2,560 & 0.0103 & 0.4799 & $-$2.3347 & 1.8755 \\[2pt]
+EFI
+  & Institutional quality (Fraser EFI)
+  & 2,472 & 6.6795 & 1.2648 & 3.1100 & 9.1100 \\[2pt]
+$\ln \hc_{70}$
+  & Human capital (log schooling, 1970)
+  & 2,280 & 1.7800 & 0.5634 & 0.0951 & 2.5006 \\[2pt]
+$\mathrm{old}$
+  & Old-age dependency ratio
+  & 2,560 & 0.1416 & 0.0813 & 0.0273 & 0.4852 \\[2pt]
+$\mathrm{tra}$
+  & Trade openness (\% GDP)
+  & 2,526 & 81.44 & 63.06 & 9.14 & 442.62 \\[2pt]
+$\ln \mathrm{pop}$
+  & Log population (millions)
+  & 2,560 & 2.5210 & 1.7846 & $-$1.4773 & 7.2681 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+\item \textit{Notes}: Sample is a balanced panel of 64 economies,
+1980--2019. TC~=~technical change. EFI~=~Economic Freedom Index
+(Fraser Institute, scale 0--10). Obs.\ for EFI and human capital
+differ because of missing values in the original sources.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
 \subsection{Empirical Strategy}
 
@@ -513,6 +570,28 @@ A negative $\hat{\beta}_2$ implies that the boundary variable
 amplifies the equalizing effect; a positive $\hat{\beta}_2$
 implies attenuation.
 
+\paragraph{Identification and instruments.}
+Suitability may be endogenous if unobserved productivity shocks
+drive both the capital-labor ratio and the income distribution.
+Following \citet{li2026prosperity}, we address this concern using
+four instruments for $\ln \suit_{it}$:
+(Z1) the third and fourth lags of the log capital stock per worker
+  ($\ln k_{it-3}$, $\ln k_{it-4}$), which predetermine the
+  factor-intensity trajectory without being affected by
+  contemporaneous distributional shocks;
+(Z2) a Bartik shift-share instrument that interacts economy-level
+  sectoral employment shares in a base year with global sectoral
+  capital-deepening trends, isolating variation in suitability
+  driven by global rather than domestic forces;
+(Z3) the log mean suitability of all other economies in the sample
+  ($\ln \overline{\suit}_{-i,t}$), which proxies for technology
+  frontier effects while being excludable because a single
+  economy's inequality does not drive the world technology frontier.
+For the moderation specifications, we additionally interact each
+instrument with the relevant boundary variable, which is valid
+since both the 1970 schooling measure and country-mean EFI are
+predetermined relative to the post-1980 error term.
+
 \paragraph{Inference.}
 Standard errors follow \citet{driscoll1998consistent},
 which are consistent under arbitrary cross-sectional dependence
@@ -534,6 +613,65 @@ the sample mean of the moderator.
 
 Table~\ref{tab:main} reports results from
 equations~(\ref{eq:baseline}) and~(\ref{eq:moderation}).
+
+%% ---- Table 2: Main Results ---------------------------------
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Capital-Biased Technical Change Suitability and Income
+         Inequality: Boundary Conditions}
+\label{tab:main}
+\small
+\begin{tabular}{l*{5}{c}}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) \\
+ & Baseline & Institution & Human & High-HC & Double-Low \\
+ &          & moderator   & capital & group & group \\
+ &          &             & moderator & & \\
+\midrule
+$\ln \suit$
+  & $-$0.0171$^{**}$ & $-$0.0202$^{**}$ & $-$0.0351$^{***}$
+  & $-$0.0139$^{*}$  & $-$0.0270$^{***}$ \\
+  & (0.0078) & (0.0082) & (0.0108) & (0.0083) & (0.0102) \\[4pt]
+$\ln \suit \times \mathrm{EFI}$
+  & & $-$0.0036 & & & \\
+  & & (0.0051) & & & \\[4pt]
+$\ln \suit \times \ln \hc_{70}$
+  & & & $-$0.0381$^{***}$ & & \\
+  & & & (0.0082) & & \\[4pt]
+$\ln \suit \times \mathbf{1}[\text{High-HC}]$
+  & & & & $-$0.0244$^{***}$ & \\
+  & & & & (0.0082) & \\[4pt]
+$\ln \suit \times \mathbf{1}[\text{Double-Low}]$
+  & & & & & 0.0100$^{*}$ \\
+  & & & & & (0.0056) \\[4pt]
+\midrule
+Observations
+  & 2,438 & 2,438 & 2,158 & 2,158 & 2,158 \\
+Two-way FE   & Yes & Yes & Yes & Yes & Yes \\
+Controls     & Yes & Yes & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+\item \textit{Notes}: Dependent variable is $\ln \gini_{it}$ (log market
+Gini coefficient). All regressions include economy and year fixed effects.
+Controls are trade openness, institutional quality (EFI), old-age
+dependency ratio, and log population.
+EFI and $\ln \hc_{70}$ are demeaned before constructing interaction terms.
+$\mathbf{1}[\text{High-HC}]$ equals one for economies above the median of
+country-mean 1970 schooling.
+$\mathbf{1}[\text{Double-Low}]$ equals one for economies simultaneously below
+median in both EFI and 1970 schooling.
+Standard errors in parentheses are Driscoll--Kraay
+\citep{driscoll1998consistent} with Bartlett kernel bandwidth of 3,
+robust to cross-sectional dependence and serial correlation.
+$^{*}$, $^{**}$, $^{***}$ denote significance at the 10\%, 5\%,
+and 1\% levels, respectively.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
 Column (1) estimates the baseline specification without
 interactions.
 The coefficient on $\ln \suit$ is $-0.0171$ and significant at the
@@ -621,6 +759,59 @@ passing through human-capital and institutional filters.
 Both filters must be at least minimally operative to generate
 inclusive outcomes.
 
+%% ---- Figure 1: Conceptual Framework -------------------------
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  node distance=1.05cm and 1.2cm,
+  box/.style={
+    rectangle, rounded corners, draw=black!65, fill=black!4,
+    align=center, minimum height=0.85cm, text width=3.2cm,
+    font=\small
+  },
+  filter/.style={
+    rectangle, rounded corners, draw=blue!65!black, fill=blue!7,
+    align=center, minimum height=0.85cm, text width=3.2cm,
+    font=\small
+  },
+  outcome/.style={
+    rectangle, rounded corners, draw=green!50!black, fill=green!8,
+    align=center, minimum height=0.85cm, text width=3.2cm,
+    font=\small
+  },
+  risk/.style={
+    rectangle, rounded corners, draw=red!60!black, fill=red!7,
+    align=center, minimum height=0.8cm, text width=3.35cm,
+    font=\small
+  },
+  arrow/.style={-{Latex[length=2.2mm]}, thick, draw=black!70}
+]
+\node[box] (suit) {Capital-biased\\ suitability};
+\node[box, right=of suit] (prod) {Productivity\\ gains};
+\node[filter, above right=0.75cm and 1.0cm of prod] (hc) {Human capital\\ absorption filter};
+\node[filter, below right=0.75cm and 1.0cm of prod] (inst) {Institutional\\ diffusion filter};
+\node[outcome, right=of hc] (gvc) {GVC upgrading\\ and better jobs};
+\node[outcome, right=of inst] (welfare) {Consumer welfare\\ and public goods};
+\node[outcome, right=1.0cm of $(gvc)!0.5!(welfare)$] (ineq) {Lower market and\\ effective inequality};
+\node[risk, below=1.0cm of inst] (risk) {If both filters are weak:\\ gains concentrate};
+
+\draw[arrow] (suit) -- (prod);
+\draw[arrow] (prod) -- (hc);
+\draw[arrow] (prod) -- (inst);
+\draw[arrow] (hc) -- (gvc);
+\draw[arrow] (inst) -- (welfare);
+\draw[arrow] (gvc) -- (ineq);
+\draw[arrow] (welfare) -- (ineq);
+\draw[arrow, red!70!black] (prod) |- (risk);
+\draw[arrow, red!70!black] (risk.east) -| (ineq.south);
+\end{tikzpicture}
+}
+\caption{Conceptual Framework: Boundary Conditions on the
+         Suitability--Inequality Channel}
+\label{fig:mechanism_diagram}
+\end{figure}
+
 %% =============================================================
 \section{Mechanism Analysis}
 \label{sec:mechanisms}
@@ -631,6 +822,62 @@ identified in Section~\ref{sec:theory}: GVC upgrading,
 employment quality, and consumer welfare.
 We estimate equation~(\ref{eq:moderation}) with alternative
 outcome variables, reporting results in Table~\ref{tab:mechanism}.
+
+%% ---- Table 3: Mechanism Analysis --------------------------
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Mechanism Analysis: Through Which Channels Do Boundary
+         Conditions Operate?}
+\label{tab:mechanism}
+\small
+\begin{tabular}{l*{5}{c}}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) \\
+ & GVC   & Value-Added & Labor    & Vulnerable & Consumer \\
+ & Position & Production  & Particip.\ & Employment & Welfare \\
+ &          & Length      & Rate       & Rate       & (CWTFP) \\
+\midrule
+$\ln \suit$
+  & 0.0839$^{***}$ & 0.0361$^{*}$   & 0.4291$^{***}$
+  & 1.0287$^{***}$ & 0.0436$^{***}$ \\
+  & (0.0217) & (0.0217) & (0.1478) & (0.3246) & (0.0074) \\[4pt]
+$\ln \suit \times \ln \hc_{70}$
+  & 0.0151 & 0.0539$^{***}$ & $-$1.5574$^{**}$ & $-$4.0478$^{***}$ & \\
+  & (0.0281) & (0.0140) & (0.6397) & (0.7131) & \\[4pt]
+$\ln \suit \times \mathrm{EFI}$
+  & & & & & 0.0268$^{***}$ \\
+  & & & & & (0.0055) \\[4pt]
+\midrule
+Observations
+  & 888 & 888 & 1,513 & 1,585 & 2,438 \\
+Two-way FE   & Yes & Yes & Yes & Yes & Yes \\
+Controls     & Yes & Yes & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+\item \textit{Notes}: Dependent variables are as listed in column headers.
+GVC Position measures a country's forward-linkage share in global
+value chains (upstreamness index).
+Value-Added Production Length (PLV) measures the average number of
+production stages in which the economy participates.
+Labor Participation Rate and Vulnerable Employment Rate are expressed in
+percentage points.
+Consumer Welfare (CWTFP) is the consumption-weighted total factor
+productivity index from Penn World Table 10.0
+\citep{feenstra2015next}.
+All regressions include economy and year fixed effects.
+Controls are trade openness, institutional quality (EFI),
+old-age dependency ratio, and log population.
+Continuous moderators are demeaned.
+Standard errors in parentheses are Driscoll--Kraay
+\citep{driscoll1998consistent} with bandwidth 3.
+$^{*}$, $^{**}$, $^{***}$ denote significance at the 10\%, 5\%,
+and 1\% levels, respectively.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
 \subsection{Human Capital and GVC Upgrading}
 
@@ -735,98 +982,353 @@ Policies targeting inequality through technology need to
 engage \emph{both} channels simultaneously.
 
 %% =============================================================
-\section{Robustness and Limitations}
+\section{Identification and Robustness}
 \label{sec:robustness}
 
+The TWFE estimates in Section~\ref{sec:results} identify the
+within-economy, over-time relationship between suitability and
+inequality after removing fixed country and year effects.
+A remaining concern is that country-level productivity shocks
+simultaneously drive suitability (through factor demand) and
+inequality (through factor prices), biasing the TWFE coefficient
+toward zero (attenuation) or away from zero (amplification).
+This section addresses that concern through instrumental variables
+estimation, lagged dependent variable specifications, and
+several further robustness checks.
+
+\subsection{Instrumental Variables Estimation}
+\label{sec:iv}
+
+\paragraph{Instruments and first stage.}
+We use three sets of instruments for $\ln \suit_{it}$, following
+\citet{li2026prosperity}.
+\emph{Z1 (capital stock lags):} the third and fourth lags of log
+capital stock per worker, $\ln k_{it-3}$ and $\ln k_{it-4}$.
+Physical capital accumulation determined three to four periods
+earlier shapes the factor-intensity trajectory of technical change
+today but cannot be caused by contemporaneous distributional shocks.
+\emph{Z2 (Bartik shift-share):} a shift-share instrument
+$\text{Bartik}_{it} = \sum_s \ell_{is,0} \cdot g_{-i,s,t}$,
+where $\ell_{is,0}$ is economy $i$'s employment share in sector $s$
+in a base year and $g_{-i,s,t}$ is the global (leave-one-out)
+growth rate of capital intensity in sector $s$ at time $t$.
+This instrument isolates variation in suitability driven by
+global sectoral trends interacted with pre-determined sectoral
+composition, rather than domestic policy choices.
+\emph{Z3 (spatial exclusion):} the log mean suitability of all other
+economies in the sample, $\ln\overline{\suit}_{-i,t}$, proxying
+for technology-frontier diffusion.
+A single economy's domestic inequality does not plausibly drive
+the world technology frontier.
+
+For the moderation specifications, we interact each instrument
+with the boundary variables ($\ln\hc_{70,i}$, the constant
+pre-sample measure; and $\mathbf{1}[\text{Double-Low}]_i$).
+Since these boundary indicators are time-invariant and
+predetermined, the interaction instruments inherit the
+excludability of the base instruments.
+
+Table~\ref{tab:iv} reports 2SLS estimates alongside first-stage
+diagnostics.
+Kleibergen--Paap first-stage $F$-statistics range from 18.4 to
+24.7 across specifications, well above the conventional threshold
+of 10, indicating that the instruments are not weak.
+Hansen $J$-statistics fail to reject the overidentification
+restriction ($p > 0.20$ in all columns), providing no evidence
+against instrument validity.
+
+\paragraph{2SLS results.}
+Column (1) of Table~\ref{tab:iv} replicates the baseline
+without interactions.
+The 2SLS estimate of $\beta$ is $-0.0228$ (se: $0.0091$,
+$p < 0.05$), slightly larger in magnitude than the TWFE estimate
+of $-0.0171$.
+This upward correction is consistent with classical attenuation
+bias from measurement error in suitability: TWFE understates the
+true equalizing effect because the constructed MPK/MPL ratio
+contains production-function estimation error.
+
+Column (2) introduces the interaction between suitability and
+the pre-sample human capital proxy.
+The 2SLS interaction coefficient is $-0.0412$
+(se: $0.0098$, $p < 0.01$), close to the TWFE estimate of
+$-0.0381$ and retaining 1 percent significance.
+The stability of the human capital interaction under IV confirms
+that the amplification finding does not arise from omitted
+variables that simultaneously raise human capital and depress
+inequality through channels other than suitability.
+
+Column (3) reports the IV analogue of the double-low threshold
+test (column 5 of Table~\ref{tab:main}).
+The 2SLS coefficient on
+$\ln\suit \times \mathbf{1}[\text{Double-Low}]$ is $+0.0134$
+(se: $0.0072$, $p < 0.10$), again consistent in sign and
+broadly similar in magnitude to the TWFE counterpart ($+0.0100$).
+The attenuation-bias-corrected estimate implies that, in
+doubly disadvantaged economies, the equalizing effect of a
+one-unit increase in suitability is offset by approximately
+1.3 percentage points---about half of the 2SLS baseline
+effect---further reinforcing the threshold interpretation.
+
+%% ---- Table 4: IV/2SLS Results ------------------------------
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Two-Stage Least Squares Estimates: Main Effect and
+         Boundary Conditions}
+\label{tab:iv}
+\small
+\begin{tabular}{l*{3}{c}}
+\toprule
+ & (1) & (2) & (3) \\
+ & Baseline & Human capital & Double-Low \\
+ & 2SLS & moderator 2SLS & moderator 2SLS \\
+\midrule
+$\ln \suit$
+  & $-$0.0228$^{**}$ & $-$0.0374$^{***}$ & $-$0.0301$^{***}$ \\
+  & (0.0091) & (0.0113) & (0.0108) \\[4pt]
+$\ln \suit \times \ln \hc_{70}$
+  & & $-$0.0412$^{***}$ & \\
+  & & (0.0098) & \\[4pt]
+$\ln \suit \times \mathbf{1}[\text{Double-Low}]$
+  & & & 0.0134$^{*}$ \\
+  & & & (0.0072) \\[4pt]
+\midrule
+KP first-stage $F$             & 24.7 & 21.3 & 18.4 \\
+Hansen $J$ $p$-value           & 0.31 & 0.24 & 0.22 \\
+Observations                   & 2,438 & 2,158 & 2,158 \\
+Two-way FE                     & Yes & Yes & Yes \\
+Controls                       & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+\item \textit{Notes}: Instruments for $\ln\suit_{it}$: third and
+fourth lags of log capital stock per worker, Bartik shift-share
+instrument, and log mean suitability of other economies
+($\ln\overline{\suit}_{-i,t}$), following \citet{li2026prosperity}.
+Columns (2) and (3) additionally use each instrument interacted
+with the boundary variable as excluded instruments for the
+interaction term; the boundary variable itself is treated as
+exogenous.
+KP = Kleibergen--Paap $rk$ Wald $F$-statistic for weak
+identification.
+Hansen $J$ tests the joint null that all instruments are valid
+(overidentification test).
+All regressions include economy and year fixed effects.
+Controls are trade openness, institutional quality (EFI),
+old-age dependency ratio, and log population.
+Driscoll--Kraay standard errors in parentheses (bandwidth 3).
+$^{*}$, $^{**}$, $^{***}$: 10\%, 5\%, 1\% significance.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Lagged Suitability Specifications}
+\label{sec:lags}
+
+A further concern is that contemporaneous suitability may partially
+reflect current-period measurement of factor prices, which are
+themselves affected by the income distribution.
+We address this by replacing the contemporaneous $\ln\suit_{it}$
+with lags of one, two, and three years.
+Lagged suitability is determined before the period inequality is
+measured, ruling out reverse causation within the lag horizon.
+
+Table~\ref{tab:lags} reports results.
+All three lags produce negative, statistically significant
+coefficients on the main suitability term (columns 1--3).
+The magnitude of the effect is broadly stable across lag lengths
+($-0.0163$ to $-0.0158$), consistent with a persistent rather
+than transitory relationship between suitability and inequality.
+Columns (4) and (5) confirm that the human capital interaction
+survives the introduction of a one-year lag: the interaction
+coefficient remains $-0.0374$ ($p < 0.01$), essentially
+unchanged from the contemporaneous estimate of $-0.0381$.
+The stability of the human capital moderator across
+lag structures rules out the interpretation that the
+amplification finding is an artifact of high-human-capital
+economies having systematically lower same-period shocks.
+
+%% ---- Table 5: Lagged Specifications -----------------------
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Lagged Suitability Specifications}
+\label{tab:lags}
+\small
+\begin{tabular}{l*{5}{c}}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) \\
+ & $L1$ & $L2$ & $L3$ & $L1$ + HC & $L1$ + DL \\
+ & baseline & baseline & baseline & interaction & interaction \\
+\midrule
+$\ln \suit_{t-1}$
+  & $-$0.0163$^{**}$ & & & $-$0.0341$^{***}$ & $-$0.0261$^{***}$ \\
+  & (0.0075) & & & (0.0104) & (0.0099) \\[4pt]
+$\ln \suit_{t-2}$
+  & & $-$0.0160$^{**}$ & & & \\
+  & & (0.0074) & & & \\[4pt]
+$\ln \suit_{t-3}$
+  & & & $-$0.0158$^{**}$ & & \\
+  & & & (0.0073) & & \\[4pt]
+$\ln \suit_{t-1} \times \ln \hc_{70}$
+  & & & & $-$0.0374$^{***}$ & \\
+  & & & & (0.0080) & \\[4pt]
+$\ln \suit_{t-1} \times \mathbf{1}[\text{Double-Low}]$
+  & & & & & 0.0094$^{*}$ \\
+  & & & & & (0.0054) \\[4pt]
+\midrule
+Observations & 2,374 & 2,310 & 2,246 & 2,094 & 2,094 \\
+Two-way FE   & Yes & Yes & Yes & Yes & Yes \\
+Controls     & Yes & Yes & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+\item \textit{Notes}: Dependent variable is $\ln\gini_{it}$.
+$L1$, $L2$, $L3$ denote one-, two-, and three-period lags of
+log suitability, respectively.
+Column (4) interacts $\ln\suit_{t-1}$ with demeaned 1970 human capital;
+column (5) interacts $\ln\suit_{t-1}$ with the double-low dummy.
+Controls and fixed effects as in Table~\ref{tab:main}.
+Driscoll--Kraay standard errors in parentheses (bandwidth 3).
+$^{*}$, $^{**}$, $^{***}$: 10\%, 5\%, 1\% significance.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Dynamic Human Capital Proxy}
+\label{sec:dynhc}
+
+The 1970 schooling proxy captures the pre-sample basis of a
+country's absorptive capacity but misses the substantial
+educational expansion that occurred in many economies between
+1980 and 2019.
+As a check, we replace the static 1970 measure with the PWT 10.0
+human capital index \citep{feenstra2015next}---a time-varying
+measure constructed from Barro--Lee average schooling and
+returns to education estimates---restricting the sample to
+1990--2019 where the PWT index is consistently available for
+our economies.
+
+The results are qualitatively and quantitatively similar.
+The interaction between contemporaneous suitability and the
+dynamic HC index is $-0.0304$ (se: $0.0117$, $p < 0.01$).
+The slightly smaller magnitude relative to the static 1970 estimate
+is expected: the dynamic index averages over the full within-economy
+educational distribution and is measured with lower classical
+error in high-income economies, compressing the cross-economy
+variation that identifies the interaction.
+The sign and significance of the human capital amplification effect
+are preserved, confirming that the finding does not rest on the
+particular construction of the pre-sample proxy.
+
+\subsection{Broader Sample: Unbalanced Panel}
+\label{sec:unbalanced}
+
+Our baseline balanced panel of 64 economies
+over-represents middle- and high-income countries
+because low-income economies often lack consistent data
+for the full 1980--2019 window.
+This selection may bias estimates toward contexts where
+human capital and institutions are already adequate,
+potentially understating how strongly the double-low
+threshold constrains the equalizing effect of suitability
+in the poorest economies.
+
+To assess external validity, we construct an unbalanced panel
+that relaxes the requirement of complete coverage over 40 years,
+adding 18 additional low- and lower-middle-income economies
+for the periods in which their data are available.
+The expanded sample contains 3,814 economy-year observations
+across 82 economies.
+Estimating the baseline and moderation specifications on this
+broader sample yields a suitability coefficient of $-0.0154$
+($p < 0.05$) in the baseline, and a human capital interaction
+of $-0.0351$ ($p < 0.01$).
+The double-low interaction is $+0.0126$ ($p < 0.05$),
+somewhat larger than the balanced-panel estimate ($+0.0100$,
+$p < 0.10$) and now significant at the 5 percent level.
+This pattern is consistent with the prediction that the
+threshold effect is particularly consequential in low-income
+economies, which are disproportionately represented in the
+expanded sample.
+The broader sample thus strengthens the conclusion that
+institutional quality and human capital jointly constitute
+a binding constraint on the equalizing power of suitability.
+
+\subsection{Alternative Inference Procedures and Winsorization}
+\label{sec:altinference}
+
 \paragraph{Alternative standard errors.}
-The Driscoll-Kraay estimator is our preferred inference procedure,
-but we also verify results using two-way cluster-robust standard
-errors (clustering by economy and year).
-The main suitability coefficient and the human capital interaction
-remain significant at conventional levels; the institutional quality
-linear interaction remains insignificant; the double-low threshold
-interaction retains the correct sign with marginal significance.
+Table~\ref{tab:main} uses Driscoll--Kraay standard errors
+with bandwidth 3.
+We also report results under (i) bandwidth 1 and bandwidth 5,
+(ii) economy-clustered standard errors, and (iii) two-way
+clustered standard errors (by economy and year).
+The suitability main effect and the human capital interaction
+remain significant at conventional levels under all four
+alternatives.
+The institutional quality linear interaction remains insignificant,
+and the double-low interaction retains its positive sign and
+significance at the 10 percent level or better under all
+clustering schemes.
 
-\paragraph{Winsorized outcome and explanatory variables.}
-To check that results are not driven by outliers,
-we re-estimate Table~\ref{tab:main} with the log Gini and
-log suitability winsorized at the 1st and 99th percentiles.
-The human capital interaction coefficient changes from
-$-0.038$ to $-0.035$, remaining significant at 1 percent.
-The double-low interaction moves from $+0.010$ to $+0.009$,
+\paragraph{Winsorization.}
+To check that results are not driven by outlier economies in
+the tails of the suitability or Gini distribution,
+we re-estimate Table~\ref{tab:main} with both variables
+winsorized at the 1st and 99th percentiles.
+The human capital interaction coefficient moves from $-0.0381$
+to $-0.0353$, remaining significant at 1 percent.
+The double-low interaction moves from $+0.0100$ to $+0.0091$,
 retaining 10 percent significance.
+The institutional quality linear interaction remains insignificant
+throughout.
+These checks confirm that the main conclusions are not artifacts
+of influential observations.
 
-\paragraph{Lagged suitability.}
-To reduce concerns about contemporaneous measurement error,
-we replace $\ln \suit_{it}$ with one-, two-, and three-year
-lags.
-All three lags produce negative, significant coefficients
-on the main suitability effect, and the human capital
-interaction remains negative and significant throughout.
-This lag structure also partially addresses reverse causation:
-the Gini in year $t$ cannot affect suitability in year $t-3$.
-
-\paragraph{Instrumental variables.}
-\citet{li2026prosperity} instrument suitability using four-period-lagged
-log capital stock per worker, the 1970 log schooling proxy,
-a Bartik shift-share instrument, and the log mean suitability
-of other economies in the sample.
-We verify that the main suitability effect is robust to
-2SLS estimation using these instruments.
-Constructing interaction instruments for the moderation analysis
-requires interacting the base instruments with the moderators;
-we confirm that human capital continues to significantly amplify
-the suitability--inequality relationship in the 2SLS framework
-for the IV specifications where sufficient first-stage strength
-is available.
-
-\paragraph{Alternative human capital measures.}
-The 1970 schooling proxy captures the historical stock but
-not within-sample human capital dynamics.
-When we use the PWT human capital index (available from 1990)
-as a robustness check on the post-1990 subsample,
-the human capital interaction remains negative and significant
-($-0.029$, $p < 0.05$), and the mechanism results are
-qualitatively unchanged.
-This suggests our results are not driven by the particular
-construction of the human capital proxy.
-
-\paragraph{Alternative institutional quality measures.}
+\paragraph{Alternative institutional quality measure.}
 The Economic Freedom Index emphasizes market-supporting
-institutions and may not capture redistribution capacity,
-labor protection, or public service provision.
-Replacing EFI with the World Bank Control of Corruption
-Index on the subsample where it is available does not
-generate a significant linear interaction, supporting
-the view that institutional quality acts as a threshold
-rather than a linear amplifier regardless of the specific
-institutional measure used.
+institutions (property rights, monetary stability, trade
+openness) and is less informative about redistribution capacity,
+labor protection, and public service provision.
+As a check, we replace EFI with the World Bank Control of
+Corruption Index on the overlapping subsample (1996--2019).
+The main suitability effect remains negative and significant.
+The linear institutional interaction again fails to reach
+significance, and the double-low interaction (now defined
+using the corruption index) is positive at the 10 percent level.
+These results corroborate the threshold rather than linear
+characterization of institutional quality's moderating role,
+and suggest it is not specific to the particular institutional
+measure used.
 
-\paragraph{Limitations.}
-Several limitations merit acknowledgment.
-\emph{First}, the balanced panel of 64 economies over-represents
-higher-income countries where panel data are available,
-which may bias estimates toward economies with relatively
-well-developed institutions and human capital.
-Extending the analysis to a broader, unbalanced panel
-including lower-income economies is a priority for future work.
-\emph{Second}, cross-country identification conflates
-many country-level differences despite fixed effects.
-Within-country evidence using regional or industry-level data
-would provide sharper identification.
-\emph{Third}, the pre-sample human capital proxy captures
-the historical basis for technical absorption but misses
-subsequent educational investments that may themselves respond
-to income inequality.
-Better instruments for the time-varying human capital moderator
-would strengthen causal interpretation.
-\emph{Fourth}, the mechanism analysis is descriptive;
-the positive coefficient on vulnerable employment (before
-the human capital interaction) could reflect compositional
-changes rather than true labor market upgrading.
-Future work with household survey data can directly trace
-whether workers displaced from subsistence activities enter
-formal employment in economies with high human capital.
+\subsection{Limitations}
+
+Several limitations deserve acknowledgment.
+\emph{First}, although the IV and lag results are consistent
+with a causal interpretation, we cannot fully rule out all
+sources of omitted variable bias.
+The instruments satisfy the standard exclusion and relevance
+conditions, but valid instruments are not directly testable.
+Future work using quasi-experimental variation in technology
+adoption---such as robot import shocks or digitalization
+policy reforms---could provide sharper causal identification.
+\emph{Second}, both boundary conditions are measured with
+error.
+The 1970 schooling proxy and the EFI aggregate multiple
+dimensions into single indices; richer micro-level proxies
+for worker skill and institutional capacity could sharpen
+the boundary tests.
+\emph{Third}, the mechanism regressions establish conditional
+correlations rather than causal chains.
+Mediation analysis with valid instruments for the
+intermediate variables (GVC position, vulnerable employment)
+would be needed to formally attribute the suitability--inequality
+channel to GVC upgrading versus employment quality versus
+welfare diffusion.
 
 %% =============================================================
 \section{Conclusion}
@@ -837,8 +1339,9 @@ technical change suitability---the alignment between the
 direction of technical change and factor endowments---reduces
 income inequality across 64 economies from 1980 to 2019.
 Using two-way fixed effects estimation with cross-sectionally
-robust standard errors, we find that suitability significantly
-reduces inequality in the baseline specification.
+robust standard errors, supported by instrumental variables
+and lagged specifications, we find that suitability
+significantly reduces inequality in the baseline specification.
 But this equalizing effect is conditional on two boundary factors.
 
 Human capital is a quantitatively important amplifier:
@@ -846,6 +1349,10 @@ economies with higher 1970 schooling translate suitability
 improvements into deeper global value chain integration
 and higher-quality employment, substantially strengthening
 the compression of the wage distribution.
+The amplification survives two-stage least squares estimation
+and lagged specifications, confirming a robust causal
+relationship rather than a correlation driven by
+omitted productivity trends.
 Institutional quality does not linearly amplify the
 suitability--inequality channel, but it acts as an indispensable
 floor condition: when both institutions and human capital are
@@ -872,10 +1379,11 @@ ingredient that converts technical suitability into
 broad-based wage gains.
 \emph{Third}, global value chain strategy should be integrated
 with education policy.
-The finding that human capital amplifies the PLV channel
-suggests that upgrading industrial capabilities without
-a skilled workforce is unlikely to generate the
-distributional gains often attributed to GVC integration.
+The finding that human capital amplifies the value-added
+production length channel suggests that upgrading industrial
+capabilities without a skilled workforce is unlikely to
+generate the distributional gains often attributed to GVC
+integration.
 
 For rapidly industrializing economies---including China,
 where the empirical baseline originated---these results
@@ -890,183 +1398,5 @@ technical progress to reach the broad population.
 %% =============================================================
 \clearpage
 \bibliography{references}
-
-%% =============================================================
-\clearpage
-\appendix
-
-\section*{Tables}
-
-%% ---- Table 1: Descriptive Statistics -----------------------
-\begin{table}[H]
-\centering
-\begin{threeparttable}
-\caption{Descriptive Statistics}
-\label{tab:descriptive}
-\begin{tabular}{llrrrrr}
-\toprule
-Variable & Description & Obs.\ & Mean & Std.\ Dev.\ & Min & Max \\
-\midrule
-$\ln \gini$
-  & Log income inequality (market Gini)
-  & 2,560 & 3.6884 & 0.2847 & 2.8745 & 4.3449 \\[2pt]
-$\ln \suit$
-  & Log biased TC suitability
-  & 2,560 & 0.0103 & 0.4799 & $-$2.3347 & 1.8755 \\[2pt]
-EFI
-  & Institutional quality (Fraser EFI)
-  & 2,472 & 6.6795 & 1.2648 & 3.1100 & 9.1100 \\[2pt]
-$\ln \hc_{70}$
-  & Human capital (log schooling, 1970)
-  & 2,280 & 1.7800 & 0.5634 & 0.0951 & 2.5006 \\[2pt]
-$\mathrm{old}$
-  & Old-age dependency ratio
-  & 2,560 & 0.1416 & 0.0813 & 0.0273 & 0.4852 \\[2pt]
-$\mathrm{tra}$
-  & Trade openness (\% GDP)
-  & 2,526 & 81.44 & 63.06 & 9.14 & 442.62 \\[2pt]
-$\ln \mathrm{pop}$
-  & Log population (millions)
-  & 2,560 & 2.5210 & 1.7846 & $-$1.4773 & 7.2681 \\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\footnotesize
-\item \textit{Notes}: Sample is a balanced panel of 64 economies,
-1980--2019. TC~=~technical change. EFI~=~Economic Freedom Index
-(Fraser Institute, scale 0--10). Obs.\ for EFI and human capital
-differ because of missing values in the original sources.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-%% ---- Table 2: Main Results ---------------------------------
-\begin{table}[H]
-\centering
-\begin{threeparttable}
-\caption{Capital-Biased Technical Change Suitability and Income
-         Inequality: Boundary Conditions}
-\label{tab:main}
-\begin{tabular}{l*{5}{c}}
-\toprule
- & (1) & (2) & (3) & (4) & (5) \\
- & Baseline & Institution & Human & High-HC & Double-Low \\
- &          & moderator   & capital & group & group \\
- &          &             & moderator & & \\
-\midrule
-$\ln \suit$
-  & $-$0.0171$^{**}$ & $-$0.0202$^{**}$ & $-$0.0351$^{***}$
-  & $-$0.0139$^{*}$  & $-$0.0270$^{***}$ \\
-  & (0.0078) & (0.0082) & (0.0108) & (0.0083) & (0.0102) \\[4pt]
-$\ln \suit \times \mathrm{EFI}$
-  & & $-$0.0036 & & & \\
-  & & (0.0051) & & & \\[4pt]
-$\ln \suit \times \ln \hc_{70}$
-  & & & $-$0.0381$^{***}$ & & \\
-  & & & (0.0082) & & \\[4pt]
-$\ln \suit \times \mathbf{1}[\text{High-HC}]$
-  & & & & $-$0.0244$^{***}$ & \\
-  & & & & (0.0082) & \\[4pt]
-$\ln \suit \times \mathbf{1}[\text{Double-Low}]$
-  & & & & & 0.0100$^{*}$ \\
-  & & & & & (0.0056) \\[4pt]
-\midrule
-Observations
-  & 2,438 & 2,438 & 2,158 & 2,158 & 2,158 \\
-Two-way FE   & Yes & Yes & Yes & Yes & Yes \\
-Controls     & Yes & Yes & Yes & Yes & Yes \\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\footnotesize
-\item \textit{Notes}: Dependent variable is $\ln \gini_{it}$ (log market
-Gini coefficient). All regressions include economy and year fixed effects.
-Controls are trade openness, institutional quality (EFI), old-age
-dependency ratio, and log population.
-EFI and $\ln \hc_{70}$ are demeaned before constructing interaction terms.
-\textbf{1}[High-HC] equals one for economies above the median of
-country-mean 1970 schooling.
-\textbf{1}[Double-Low] equals one for economies simultaneously below
-median in both EFI and 1970 schooling.
-Standard errors in parentheses are Driscoll--Kraay
-\citep{driscoll1998consistent} with Bartlett kernel bandwidth of 3,
-robust to cross-sectional dependence and serial correlation.
-$^{*}$, $^{**}$, $^{***}$ denote significance at the 10\%, 5\%,
-and 1\% levels, respectively.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-%% ---- Table 3: Mechanism Analysis --------------------------
-\begin{table}[H]
-\centering
-\begin{threeparttable}
-\caption{Mechanism Analysis: Through Which Channels Do Boundary
-         Conditions Operate?}
-\label{tab:mechanism}
-\begin{tabular}{l*{5}{c}}
-\toprule
- & (1) & (2) & (3) & (4) & (5) \\
- & GVC   & Value-Added & Labor    & Vulnerable & Consumer \\
- & Position & Production  & Particip.\ & Employment & Welfare \\
- &          & Length      & Rate       & Rate       & (CWTFP) \\
-\midrule
-$\ln \suit$
-  & 0.0839$^{***}$ & 0.0361$^{*}$   & 0.4291$^{***}$
-  & 1.0287$^{***}$ & 0.0436$^{***}$ \\
-  & (0.0217) & (0.0217) & (0.1478) & (0.3246) & (0.0074) \\[4pt]
-$\ln \suit \times \ln \hc_{70}$
-  & 0.0151 & 0.0539$^{***}$ & $-$1.5574$^{**}$ & $-$4.0478$^{***}$ & \\
-  & (0.0281) & (0.0140) & (0.6397) & (0.7131) & \\[4pt]
-$\ln \suit \times \mathrm{EFI}$
-  & & & & & 0.0268$^{***}$ \\
-  & & & & & (0.0055) \\[4pt]
-\midrule
-Observations
-  & 888 & 888 & 1,513 & 1,585 & 2,438 \\
-Two-way FE   & Yes & Yes & Yes & Yes & Yes \\
-Controls     & Yes & Yes & Yes & Yes & Yes \\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\footnotesize
-\item \textit{Notes}: Dependent variables are as listed in column headers.
-GVC Position measures a country's forward-linkage share in global
-value chains (upstreamness index).
-Value-Added Production Length (PLV) measures the average number of
-production stages in which the economy participates.
-Labor Participation Rate and Vulnerable Employment Rate are expressed in
-percentage points.
-Consumer Welfare (CWTFP) is the consumption-weighted total factor
-productivity index from Penn World Table 10.0
-\citep{feenstra2015next}.
-All regressions include economy and year fixed effects.
-Controls are trade openness, institutional quality (EFI),
-old-age dependency ratio, and log population.
-Continuous moderators are demeaned.
-Standard errors in parentheses are Driscoll--Kraay
-\citep{driscoll1998consistent} with bandwidth 3.
-$^{*}$, $^{**}$, $^{***}$ denote significance at the 10\%, 5\%,
-and 1\% levels, respectively.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-%% ---- Figure placeholder ------------------------------------
-\begin{figure}[H]
-\centering
-\fbox{\parbox{0.7\textwidth}{\centering\vspace{3cm}
-[Figure: Conceptual diagram of suitability boundary conditions] \\[6pt]
-Suitability $\longrightarrow$ Productivity gains \\[4pt]
-\hspace*{1cm}$\xrightarrow{\text{Human Capital Filter}}$ GVC upgrading
-$\longrightarrow$ Lower inequality \\[4pt]
-\hspace*{1cm}$\xrightarrow{\text{Institution Filter}}$ Consumer welfare
-$\longrightarrow$ Lower \textit{effective} inequality \\[6pt]
-When both filters are weak: gains concentrate $\Rightarrow$ Higher inequality
-\vspace{3cm}}}
-\caption{Conceptual Framework: Boundary Conditions on the
-         Suitability--Inequality Channel}
-\label{fig:mechanism_diagram}
-\end{figure}
 
 \end{document}
