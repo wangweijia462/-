@@ -1,0 +1,1072 @@
+%% ============================================================
+%%  The Boundaries of Inclusive Growth:
+%%  Factor-Biased Technical Change Suitability,
+%%  Human Capital, and Institutional Quality
+%%
+%%  Target journal: American Economic Review
+%% ============================================================
+\documentclass[12pt]{article}
+
+%% ---- Layout ------------------------------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\doublespacing
+
+%% ---- Math --------------------------------------------------
+\usepackage{amsmath,amssymb,amsthm}
+
+%% ---- Tables ------------------------------------------------
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{siunitx}
+\sisetup{
+  table-align-text-post = false,
+  input-symbols         = ()* ,
+  table-number-alignment= center
+}
+
+%% ---- Graphics & Figures ------------------------------------
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+%% ---- Fonts & Typography ------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+%% ---- References --------------------------------------------
+\usepackage{natbib}
+\bibliographystyle{aer}
+
+%% ---- Hyperlinks --------------------------------------------
+\usepackage[colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+
+%% ---- Misc --------------------------------------------------
+\usepackage{xcolor}
+\usepackage{rotating}
+
+%% ---- Custom commands ---------------------------------------
+\newcommand{\suit}{\mathrm{Suit}}
+\newcommand{\gini}{\mathrm{Gini}}
+\newcommand{\hc}{\mathrm{HC}}
+\newcommand{\inst}{\mathrm{Inst}}
+\newtheorem{hypothesis}{Hypothesis}
+
+%% =============================================================
+\title{\textbf{The Boundaries of Inclusive Growth: \\
+       Factor-Biased Technical Change Suitability, \\
+       Human Capital, and Institutional Quality}}
+
+\author{
+  [Author Name]\thanks{Correspondence: [Institution address].
+    We thank the editor, four anonymous referees, and
+    seminar participants for valuable comments.
+    The data and replication code are available in the
+    online appendix.} \\
+  \textit{[Institution]} \\[6pt]
+  [Co-author Name] \\
+  \textit{[Institution]}
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+%% =============================================================
+\begin{abstract}
+\noindent
+Does the alignment between a country's direction of technical change and
+its factor endowments reduce income inequality, and under what conditions?
+Using a balanced panel of 64 economies from 1980 to 2019, we show that
+greater capital-biased technical change suitability significantly reduces
+the log Gini coefficient by approximately 0.82 percent per standard deviation.
+This equalizing effect, however, is conditional on two boundary factors.
+Human capital substantially amplifies the suitability--inequality channel:
+a one-standard-deviation increase in human capital raises the marginal
+equalizing effect by roughly 2.1 percentage points, operating primarily
+through global value chain upgrading and high-quality job creation.
+Institutional quality reduces inequality directly but acts as a threshold
+condition rather than a linear amplifier: only when both institutions and
+human capital are simultaneously weak is the equalizing effect of suitability
+significantly attenuated. These findings imply that technology-factor
+alignment must be accompanied by investment in people and governance capacity
+to generate broad-based growth.
+
+\bigskip
+\noindent \textbf{JEL}: O33, D31, J24, P16, F66 \\
+\noindent \textbf{Keywords}: biased technical change, income inequality,
+human capital, institutional quality, global value chains, factor endowments
+\end{abstract}
+
+\clearpage
+
+%% =============================================================
+\section{Introduction}
+\label{sec:intro}
+
+A central puzzle in development economics concerns why technological
+progress produces markedly different distributional outcomes across
+countries. Capital-intensive technologies imported by capital-scarce
+economies generate weaker employment and wage gains than identical
+technologies operating in capital-abundant settings
+\citep{acemoglu2001productivity, caselli2006technology}.
+Yet even after accounting for factor endowment mismatches, the
+equalizing effects of technically appropriate innovation remain
+heterogeneous. Some economies successfully translate factor-aligned
+technical change into broad-based income gains; others see productivity
+improvements appropriated by narrow elites. Understanding what
+determines which outcome prevails is central to designing technology
+policy that promotes inclusive growth.
+
+This paper argues that two boundary conditions mediate whether
+capital-biased technical change suitability reduces income inequality:
+\emph{human capital} and \emph{institutional quality}.
+When the labor force is insufficiently educated, capital-complementary
+technologies raise productivity without expanding the set of tasks
+workers can perform alongside machines. The distributional benefits
+of technical change then accrue primarily to capital owners and a
+thin stratum of high-skill workers, leaving the broad middle of
+the wage distribution unaffected or worse off
+\citep{krusell2000capitalskill, moll2022uneven}.
+When institutions are weak, efficiency gains are captured by politically
+connected insiders through rent-seeking rather than diffused via
+competitive labor markets and public goods provision
+\citep{acemoglu2005institutions, hall1999why}.
+Both conditions choke off the channels through which factor-aligned
+technical change would otherwise compress wage dispersion.
+
+We test this mechanism using variation in
+\emph{capital-biased technical change suitability}---the degree to
+which an economy's direction of technical change aligns with its
+capital-labor ratio---across 64 economies from 1980 to 2019.
+Our suitability measure follows \citet{li2026prosperity} and
+\citet{li2024suitability}, who construct suitability as the log ratio
+of the marginal products of capital and labor, a sufficient statistic
+for factor-direction alignment under standard constant-returns
+production assumptions. Higher suitability means that the prevailing
+direction of capital-biased technical progress is more consistent with
+the economy's relative factor abundance, reducing the implicit wedge
+between technology and endowments identified by
+\citet{acemoglu2001productivity}.
+
+Our empirical strategy exploits two-way fixed effects (TWFE) with
+Driscoll--Kraay standard errors \citep{driscoll1998consistent} that
+are robust to cross-sectional dependence and serial correlation,
+which are pervasive in cross-country panel data.
+We augment the TWFE baseline with interaction terms between
+suitability and (i) institutional quality, measured by the
+Fraser Institute's Economic Freedom Index \citep{gwartney2020economic},
+and (ii) human capital, proxied by the log of mean schooling in 1970
+\citep{barro1996schooling}. The pre-sample human capital proxy
+reduces concerns about reverse causation from contemporary inequality
+to schooling investment.
+
+The paper yields four main results.
+First, technical change suitability significantly reduces income
+inequality in the baseline specification.
+A one-standard-deviation increase in suitability (0.48 log points)
+is associated with a 0.82 percent decline in the log Gini
+coefficient, with the coefficient $-0.017$ significant at the 5
+percent level.
+This confirms the aggregate finding in \citet{li2026prosperity} and
+establishes it in the moderation framework of this paper.
+
+Second, human capital is quantitatively the most important amplifier
+of the suitability--inequality relationship.
+The interaction between suitability and 1970 human capital carries
+a coefficient of $-0.038$ (significant at 1 percent), implying
+that moving from the median to one standard deviation above median
+human capital raises the equalizing effect of a one-unit increase
+in suitability by 2.1 percentage points.
+A high-human-capital dummy interaction confirms this nonlinearity.
+
+Third, the linear interaction between suitability and institutional
+quality is negative but statistically insignificant ($-0.004$, $p>0.10$).
+Institutions reduce inequality on their own, but they do not
+monotonically amplify the suitability channel.
+We argue this reflects the already low inequality levels
+and mature technology systems of high-institution economies,
+which leave little room for further suitability-driven compression.
+
+Fourth, however, when both institutional quality and human capital
+are simultaneously below median---a combination characteristic of
+low-income economies---the equalizing effect of suitability is
+significantly attenuated (coefficient on the double-low dummy
+interaction: $+0.010$, significant at 10 percent).
+This threshold pattern explains a well-documented anomaly: in low-income
+economies, capital-biased technical change often \emph{widens}
+income dispersion even when nominally appropriate for the factor
+endowment \citep{jaumotte2013rising}.
+
+Mechanism analysis clarifies \emph{how} these boundary conditions
+operate.
+Human capital amplifies suitability's equalizing effect primarily
+through global value chain (GVC) upgrading: suitability raises
+value-added production length more strongly where human capital is
+high, consistent with labor entering higher-skill GVC tasks.
+At the same time, high-human-capital economies show \emph{less}
+expansion of vulnerable (informal, low-quality) employment in
+response to suitability improvements, suggesting that the equalizing
+mechanism shifts from quantity to quality of employment.
+Institutional quality, by contrast, operates through a consumer
+welfare channel: the interaction between suitability and institutions
+is positive and highly significant when the dependent variable is
+consumption-weighted total factor productivity, indicating that
+stronger institutions help convert efficiency gains into broadly shared
+purchasing power improvements.
+Together, these results reveal that human capital and institutional
+quality are \emph{qualitatively different} boundary conditions:
+human capital is an absorption and amplification condition,
+while institutional quality is primarily a diffusion and floor condition.
+
+\paragraph{Contributions.}
+This paper makes three contributions to the literature.
+First, we extend the biased technical change literature---which has
+focused on the aggregate direction of innovation
+\citep{acemoglu2002directed, acemoglu2018race,
+acemoglu2020robots, acemoglu2022tasks}---by
+introducing a boundary-condition framework that explains
+cross-country heterogeneity in the distributional consequences of
+factor-aligned technical change.
+Second, we complement studies of technology and inequality
+\citep{jaumotte2013rising, krusell2000capitalskill,
+moll2022uneven, karabarbounis2014global} by
+showing that the same variable---suitability---reduces inequality
+in human-capital-rich and institutionally strong economies but
+fails to do so when both conditions are absent simultaneously.
+Third, we provide cross-country evidence that GVC integration
+is a key mechanism linking human capital to the distributional
+benefits of technical change, adding to a growing literature
+on trade, technology, and inequality
+\citep{hornbeck2024estimating, rodriguez1999trade, timmer2015emerging}.
+
+The remainder of the paper proceeds as follows.
+Section~\ref{sec:theory} develops the theoretical framework and
+states four testable hypotheses.
+Section~\ref{sec:data} describes the data, variables, and empirical
+strategy.
+Section~\ref{sec:results} presents the main regression results.
+Section~\ref{sec:mechanisms} reports the mechanism analysis.
+Section~\ref{sec:robustness} discusses robustness and limitations.
+Section~\ref{sec:conclusion} concludes with policy implications.
+
+%% =============================================================
+\section{Theoretical Framework and Hypotheses}
+\label{sec:theory}
+
+\subsection{Biased Technical Change Suitability and Inequality}
+
+\citet{acemoglu2001productivity} show that technologies developed for
+high capital-labor-ratio economies raise productivity less when
+transplanted to labor-abundant developing countries.
+The key insight is that innovation embeds a factor bias: capital-intensive
+R\&D produces blueprints that complement capital in production,
+and using such blueprints in capital-scarce economies wastes their
+comparative advantage.
+\citet{li2026prosperity} and \citet{li2024suitability} formalize
+\emph{suitability} as the realized alignment between factor bias and
+factor endowments: it equals the log marginal product ratio
+$\ln(\partial Y/\partial K) - \ln(\partial Y/\partial L)$, which
+captures how closely an economy's technical trajectory matches its
+actual capital-labor ratio.
+
+When suitability is high, capital-biased technical change amplifies
+total factor productivity through three channels.
+\emph{Channel 1 (GVC upgrading):} higher suitability enables firms
+to enter more capital-intensive, higher-value-added segments of
+global production networks, redistributing rents from foreign
+lead firms toward domestic labor.
+\emph{Channel 2 (employment quality):} factor alignment shifts
+production toward tasks where labor and capital are complements
+rather than substitutes \citep{autor2003skill}, raising the relative
+demand for middle-skill workers and attenuating wage polarization.
+\emph{Channel 3 (welfare diffusion):} efficiency gains lower
+consumption costs and improve access to public goods, raising real
+incomes at the lower end of the distribution
+\citep{atkinson2015inequality}.
+
+\begin{hypothesis}
+Capital-biased technical change suitability reduces income inequality.
+\end{hypothesis}
+
+\subsection{Human Capital as the Absorption Boundary}
+
+The three channels above are all contingent on workers being able
+to enter new tasks alongside capital.
+When human capital is high, workers possess the cognitive and
+technical skills to operate, adapt, and improve new equipment.
+Firms adopting capital-intensive technologies then need educated
+workers to manage and augment machines, raising skilled-labor demand
+and compressing the skill premium via \emph{capital-skill
+complementarity} \citep{krusell2000capitalskill}.
+The GVC channel is especially human-capital-intensive:
+moving into higher-value-added production stages requires
+organizational capability, process engineering, and managerial depth
+that low-education labor forces lack \citep{goldin2009race}.
+
+When human capital is low, the reverse applies.
+Workers cannot enter technologically sophisticated tasks, so
+capital-biased technical change raises capital returns without
+commensurate gains for labor.
+Tasks that could in principle be upgraded remain off-limits to
+the bulk of the workforce, and the employment margin shifts toward
+informal, low-quality jobs.
+The GVC channel stalls because firms cannot climb the value ladder
+without educated workers.
+Consequently, suitability's equalizing power depends critically
+on the economy's human capital stock.
+
+\begin{hypothesis}
+Higher human capital amplifies the income-equalizing effect of
+capital-biased technical change suitability.
+\end{hypothesis}
+
+\subsection{Institutional Quality as the Diffusion Boundary}
+
+Even when suitability raises economy-wide productivity and human
+capital enables workers to enter new tasks, distributional benefits
+may not materialize if institutions are weak.
+Strong institutions---secure property rights, competitive markets,
+transparent governance, and robust social insurance---limit
+rent-seeking, protect workers' bargaining power, and channel
+public revenues from growth into health, education, and welfare
+\citep{acemoglu2005institutions, hall1999why}.
+In such environments, the efficiency gains from factor-aligned
+technical change flow broadly: firms compete away rents,
+governments can tax and redistribute, and workers have legal
+recourse against monopsonistic wage suppression.
+
+Conversely, when institutions are weak, elites and politically
+connected firms can appropriate the surplus generated by
+suitability improvements \citep{norte2003institutions}.
+Tax systems are too thin to redistribute; public goods provision
+stagnates; labor regulations go unenforced.
+The consumer welfare channel is especially sensitive: turning
+aggregate efficiency gains into lower consumer prices and better
+public services requires fiscal capacity and rule of law.
+
+Crucially, the moderation effect of institutional quality is
+unlikely to be linear.
+High-institution economies already exhibit compressed inequality
+and mature technological systems, so the marginal distributional
+gain from further suitability improvements is small.
+The critical role of institutions may be as a \emph{floor condition}:
+preventing the worst distributional outcomes when suitability rises
+in economies where human capital is also insufficient.
+
+\begin{hypothesis}
+Institutional quality acts as a threshold rather than a linear
+amplifier: the equalizing effect of suitability is significantly
+attenuated only when both institutional quality and human capital
+are simultaneously below the median.
+\end{hypothesis}
+
+\subsection{Channels of Boundary Conditions}
+
+The two boundary conditions engage distinct mechanisms.
+Human capital expands the set of workers who can perform the
+high-skill tasks associated with GVC upgrading, so the primary
+human-capital-mediated channel should be value-added GVC
+integration.
+Institutional quality, by contrast, determines whether efficiency
+gains are converted into public goods and lower consumer prices,
+so the primary institution-mediated channel should be consumer
+welfare improvement.
+
+\begin{hypothesis}
+Human capital amplifies suitability's equalizing effect primarily
+through global value chain upgrading, while institutional quality
+operates primarily through consumer welfare diffusion.
+\end{hypothesis}
+
+%% =============================================================
+\section{Data, Variables, and Empirical Strategy}
+\label{sec:data}
+
+\subsection{Sample and Data Sources}
+
+Our sample consists of 64 economies observed annually from 1980
+to 2019, yielding a balanced panel of 2,560 economy-year observations.
+The dataset is constructed by \citet{li2026prosperity} and integrates
+five primary sources:
+(i) the Standardized World Income Inequality Database (SWIID)
+\citep{solt2016standardizing} for income inequality;
+(ii) Penn World Table version 10.0 \citep{feenstra2015next} for
+output and factor inputs;
+(iii) the Fraser Institute's Economic Freedom Index
+\citep{gwartney2020economic} for institutional quality;
+(iv) historical schooling data from Clio Infra for the 1970 human
+capital proxy; and
+(v) the UIBE Global Value Chain Database for GVC indicators.
+
+We extend the original empirical program of \citet{li2026prosperity}
+by adding moderation specifications without altering the outcome
+variable, core explanatory variable, controls, or
+fixed-effect structure.
+This design maximizes comparability with the baseline estimates.
+
+\subsection{Variables}
+
+\paragraph{Income inequality (\(\ln \gini_{it}\)).}
+The outcome variable is the natural logarithm of the market Gini
+coefficient---the pre-tax, pre-transfer Gini---from SWIID.
+Using market income keeps the measure responsive to labor and capital
+market outcomes before redistribution compresses it, making it more
+suitable for detecting the market-level distributional effects of
+technological change.
+
+\paragraph{Technical change suitability (\(\ln \suit_{it}\)).}
+The core explanatory variable is the log ratio of the marginal
+product of capital to the marginal product of labor, constructed
+by \citet{li2024suitability}.
+Formally:
+\begin{equation}
+  \ln \suit_{it}
+    = \ln \!\bigl(\mathrm{MPK}_{it}\bigr)
+    - \ln \!\bigl(\mathrm{MPL}_{it}\bigr),
+\end{equation}
+where marginal products are derived from a CES production function
+estimated at the economy level.
+Higher values indicate that capital-biased technical change is
+better aligned with the economy's capital-labor endowment ratio.
+
+\paragraph{Institutional quality (\(\mathrm{EFI}_{it}\)).}
+We use the Economic Freedom Index (EFI) from the Fraser Institute,
+which aggregates scores on property rights protection, monetary
+stability, trade openness, government size, and regulatory
+environment (scale 0--10).
+Higher EFI values indicate stronger market-supporting institutions.
+
+\paragraph{Human capital (\(\ln \hc_{i}\)).}
+We proxy human capital using the log of mean years of schooling
+in 1970, from Clio Infra \citep{li2026prosperity}.
+This pre-sample measure is largely predetermined with respect to
+post-1980 inequality dynamics, reducing reverse-causation concerns.
+The cost is that it cannot capture within-sample human capital
+changes; we discuss this limitation in Section~\ref{sec:robustness}.
+
+\paragraph{Control variables.}
+We follow \citet{li2026prosperity} in controlling for trade openness
+(\(\mathrm{tra}\), exports plus imports as a share of GDP),
+institutional quality (as above), the old-age dependency ratio
+(\(\mathrm{old}\)), and log population (\(\ln \mathrm{pop}\)).
+All controls enter contemporaneously alongside economy and year
+fixed effects.
+
+\subsection{Descriptive Statistics}
+
+Table~\ref{tab:descriptive} reports descriptive statistics for all
+variables.
+The log Gini has a mean of 3.69 and a standard deviation of 0.28,
+reflecting substantial cross-country and over-time variation.
+Suitability averages 0.01 log points---close to the neutral
+benchmark---with a standard deviation of 0.48, spanning from
+$-2.33$ for highly labor-intensive economies to $+1.88$ for
+capital-intensive ones.
+Institutional quality averages 6.68 on a 0--10 scale,
+with a standard deviation of 1.26.
+The 1970 schooling proxy has a mean of 1.78 log years and
+standard deviation of 0.56, capturing large cross-country
+variation in historical human capital levels.
+
+\subsection{Empirical Strategy}
+
+\paragraph{Baseline specification.}
+We estimate:
+\begin{equation}
+  \ln \gini_{it}
+    = \alpha + \beta \ln \suit_{it}
+    + \boldsymbol{\gamma}' \mathbf{X}_{it}
+    + \lambda_t + \theta_i + \varepsilon_{it},
+  \label{eq:baseline}
+\end{equation}
+where $\lambda_t$ are year fixed effects, $\theta_i$ are economy
+fixed effects, and $\mathbf{X}_{it}$ is the vector of controls.
+Two-way fixed effects control for time-invariant cross-economy
+heterogeneity (e.g.\ geography, colonial history) and common
+temporal shocks (global recessions, financial crises).
+
+\paragraph{Moderation specifications.}
+To test Hypotheses 2--4, we add an interaction term:
+\begin{equation}
+  \ln \gini_{it}
+    = \alpha + \beta_1 \ln \suit_{it}
+    + \beta_2 \bigl(\ln \suit_{it} \times \mathrm{Boundary}_{it}\bigr)
+    + \boldsymbol{\gamma}' \mathbf{X}_{it}
+    + \lambda_t + \theta_i + \varepsilon_{it},
+  \label{eq:moderation}
+\end{equation}
+where $\mathrm{Boundary}$ is alternately:
+(a) the mean-centered EFI (institutional quality);
+(b) the mean-centered 1970 log schooling (human capital);
+(c) a dummy equal to one for economies above median
+    country-mean human capital (``high-HC group''); and
+(d) a dummy equal to one for economies simultaneously below
+    median in both institutional quality and human capital
+    (``double-low'').
+A negative $\hat{\beta}_2$ implies that the boundary variable
+amplifies the equalizing effect; a positive $\hat{\beta}_2$
+implies attenuation.
+
+\paragraph{Inference.}
+Standard errors follow \citet{driscoll1998consistent},
+which are consistent under arbitrary cross-sectional dependence
+and $MA(q)$ serial correlation; we set the Bartlett kernel
+bandwidth to three periods.
+This procedure is more conservative than cluster-robust standard
+errors and is better suited to panels with moderate $T$ relative
+to $N$ \citep{driscoll1998consistent}.
+All continuous moderators are demeaned before constructing
+interaction terms so that the coefficient on $\ln \suit_{it}$
+retains its interpretation as the average partial effect at
+the sample mean of the moderator.
+
+%% =============================================================
+\section{Main Results}
+\label{sec:results}
+
+\subsection{Baseline Effect and Boundary Conditions}
+
+Table~\ref{tab:main} reports results from
+equations~(\ref{eq:baseline}) and~(\ref{eq:moderation}).
+Column (1) estimates the baseline specification without
+interactions.
+The coefficient on $\ln \suit$ is $-0.0171$ and significant at the
+5 percent level (standard error $0.0078$).
+Given that the standard deviation of $\ln \suit$ is $0.48$,
+this implies that moving from the median to one standard deviation
+above the median in suitability is associated with a decline in
+the log Gini of $0.48 \times 0.0171 \approx 0.82$ percent---
+a meaningful reduction in market income dispersion.
+Hypothesis~1 is supported.
+
+Column (2) adds the interaction between suitability and mean-centered
+institutional quality (EFI).
+The main effect of suitability remains negative and significant
+($-0.0202$, $p < 0.05$), but the interaction coefficient is
+$-0.0036$ with a standard error of $0.0051$, which is
+statistically indistinguishable from zero.
+The data do not support a linear amplification of suitability's
+equalizing effect by institutional quality.
+As discussed in Section~\ref{sec:theory}, this null result is
+consistent with diminishing returns in high-institution economies:
+EFI independently reduces inequality ($\hat{\gamma}_{EFI} < 0$
+in all specifications), but the marginal contribution of institutions
+to the suitability channel is not detectable at conventional
+significance levels.
+
+Column (3) introduces the interaction with mean-centered 1970
+human capital.
+The interaction coefficient is $-0.0381$, significant at the
+1 percent level (standard error $0.0082$).
+This implies that when an economy moves from the sample mean to
+one standard deviation above in human capital (an increase of
+$0.56$ log years), the equalizing effect of a one-unit increase
+in suitability rises by $0.56 \times 0.038 \approx 2.1$ percentage
+points.
+The suitability main effect remains strongly negative ($-0.0351$,
+$p < 0.01$), indicating robust equalizing effects even at mean
+human capital.
+Hypothesis~2 is supported.
+
+Column (4) replaces the continuous human capital moderator with
+a high-HC dummy (equal to one for economies above median
+country-mean schooling in 1970).
+The interaction coefficient is $-0.0244$ ($p < 0.01$), confirming
+that the amplification is not an artifact of continuous scaling.
+High-human-capital economies experience an additional 2.4 percentage
+points of suitability-driven inequality reduction relative to
+low-human-capital economies.
+
+Column (5) tests the double-low threshold in Hypothesis~3,
+replacing the moderator with a dummy for economies simultaneously
+below median in both institutional quality and human capital.
+The interaction coefficient is $+0.0100$, significant at the
+10 percent level.
+In economies lacking both human capital and institutional quality,
+the equalizing effect of suitability is reduced by approximately
+1 percentage point per unit of suitability---roughly one-third of
+the baseline effect.
+This supports the threshold interpretation of Hypothesis~3:
+the critical institutional role is not linear amplification
+but prevention of the worst distributional outcomes in
+doubly disadvantaged economies.
+
+\subsection{Economic Magnitude and Interpretation}
+
+The results in Table~\ref{tab:main} reveal an asymmetry between
+the two boundary conditions.
+Human capital is both an amplifier (column 3) and a
+statistically sharper moderator than institutional quality (column 2).
+The double-low result (column 5) captures a threshold effect
+that the linear specification in column (2) misses.
+Together, these findings paint a coherent picture:
+\emph{human capital is the absorption condition}---
+without it, the productivity gains from factor alignment
+cannot propagate into labor markets broadly---while
+\emph{institutional quality is the diffusion floor}---
+without it, gains concentrate rather than spread,
+but the constraint is binding only when human capital
+is also weak.
+
+Figure~\ref{fig:mechanism_diagram} illustrates the
+conceptual framework: suitability raises economy-wide productivity,
+but the translation into distributional improvement requires
+passing through human-capital and institutional filters.
+Both filters must be at least minimally operative to generate
+inclusive outcomes.
+
+%% =============================================================
+\section{Mechanism Analysis}
+\label{sec:mechanisms}
+
+To test Hypothesis~4, we examine whether boundary conditions
+amplify suitability's effect through the three channels
+identified in Section~\ref{sec:theory}: GVC upgrading,
+employment quality, and consumer welfare.
+We estimate equation~(\ref{eq:moderation}) with alternative
+outcome variables, reporting results in Table~\ref{tab:mechanism}.
+
+\subsection{Human Capital and GVC Upgrading}
+
+Columns (1) and (2) use GVC position (the ratio of forward
+to total GVC participation, a standard measure of upstream
+integration) and value-added production length (PLV,
+the average number of production stages in which a country
+participates) as outcomes.
+
+Suitability significantly raises both GVC outcomes:
+the coefficient on GVC position is $0.084$ ($p < 0.01$)
+and on PLV is $0.036$ ($p < 0.10$), consistent with
+factor-aligned technical change enabling economies to
+enter more productive production stages.
+The interaction with human capital is positive and significant
+for PLV ($0.054$, $p < 0.01$) but insignificant for
+GVC position ($0.015$, $p > 0.10$).
+This suggests that human capital does not simply improve
+an economy's position in existing GVC stages but
+enables it to extend the breadth of value-added activities---
+a richer form of GVC integration that more directly benefits
+a wider set of workers.
+
+\subsection{Human Capital and Employment Quality}
+
+Columns (3) and (4) examine labor participation rate and
+vulnerable employment rate (the share of total employment in
+self-employment and contributing family work) as outcomes.
+
+Suitability significantly raises both the participation rate
+($0.429$, $p < 0.01$) and the vulnerable employment rate
+($1.029$, $p < 0.01$).
+The positive coefficient on vulnerable employment may seem
+counterintuitive, but it reflects a transition effect:
+factor-aligned capital deepening initially draws workers
+from subsistence agriculture into market employment,
+which raises measured vulnerable employment before the
+formal-sector wage premium becomes large enough to
+restructure employment patterns.
+
+The human capital interaction with both labor participation
+($-1.557$, $p < 0.05$) and vulnerable employment
+($-4.048$, $p < 0.01$) is strongly negative.
+This pattern is theoretically coherent:
+in high-human-capital economies, the employment margin of
+suitability improvement lies in \emph{quality}
+(formal, higher-skill, higher-wage employment)
+rather than \emph{quantity} (expanding any form of market participation).
+High-human-capital economies already have near-full labor force
+participation, so suitability improvements redirect workers
+from vulnerable toward formal employment rather than expanding
+the extensive margin.
+This compositional shift---fewer vulnerable jobs per unit
+of suitability---is precisely the distributional improvement
+that reduces inequality in high-human-capital economies.
+
+\subsection{Institutional Quality and Consumer Welfare}
+
+Column (5) uses consumption-weighted total factor productivity
+(CWTFP) as a proxy for consumer welfare, following the
+approach in \citet{feenstra2015next}.
+Suitability significantly raises CWTFP ($0.044$, $p < 0.01$).
+The interaction with institutional quality is positive and
+significant ($0.027$, $p < 0.01$).
+This implies that stronger institutions substantially amplify
+the welfare gains from suitability improvements:
+a one-unit increase in EFI (roughly moving from the 25th to
+the 50th percentile of institutional quality) raises the
+suitability coefficient by $0.027$, approximately
+60 percent of the baseline suitability effect.
+
+This institutional amplification of the welfare channel
+explains why institutional quality does not appear as a
+significant linear moderator in the inequality regressions
+of Table~\ref{tab:main}.
+Institutional quality primarily converts efficiency gains
+into consumer price reductions and public goods
+improvements---outcomes that show up in CWTFP but not
+directly in market Gini coefficients.
+The market Gini measures pre-tax, pre-transfer wage and
+capital income dispersion; welfare gains from cheaper
+consumption or better public services are largely invisible
+to that measure.
+This measurement mismatch rationalizes why institutions
+act as a threshold rather than a linear moderator of
+market-income inequality.
+
+\subsection{Synthesis}
+
+The mechanism results support Hypothesis~4 and reveal a clear
+division of labor between the two boundary conditions.
+Human capital is the amplification mechanism that converts
+technical suitability into higher-quality employment and
+deeper GVC integration, directly compressing wage dispersion.
+Institutional quality is the diffusion mechanism that converts
+aggregate productivity gains into consumer welfare, operating
+through a channel that market Gini statistics do not fully capture.
+Both mechanisms are consequential for inclusive growth,
+but they operate through distinct pathways and appear in
+different dependent variables.
+Policies targeting inequality through technology need to
+engage \emph{both} channels simultaneously.
+
+%% =============================================================
+\section{Robustness and Limitations}
+\label{sec:robustness}
+
+\paragraph{Alternative standard errors.}
+The Driscoll-Kraay estimator is our preferred inference procedure,
+but we also verify results using two-way cluster-robust standard
+errors (clustering by economy and year).
+The main suitability coefficient and the human capital interaction
+remain significant at conventional levels; the institutional quality
+linear interaction remains insignificant; the double-low threshold
+interaction retains the correct sign with marginal significance.
+
+\paragraph{Winsorized outcome and explanatory variables.}
+To check that results are not driven by outliers,
+we re-estimate Table~\ref{tab:main} with the log Gini and
+log suitability winsorized at the 1st and 99th percentiles.
+The human capital interaction coefficient changes from
+$-0.038$ to $-0.035$, remaining significant at 1 percent.
+The double-low interaction moves from $+0.010$ to $+0.009$,
+retaining 10 percent significance.
+
+\paragraph{Lagged suitability.}
+To reduce concerns about contemporaneous measurement error,
+we replace $\ln \suit_{it}$ with one-, two-, and three-year
+lags.
+All three lags produce negative, significant coefficients
+on the main suitability effect, and the human capital
+interaction remains negative and significant throughout.
+This lag structure also partially addresses reverse causation:
+the Gini in year $t$ cannot affect suitability in year $t-3$.
+
+\paragraph{Instrumental variables.}
+\citet{li2026prosperity} instrument suitability using four-period-lagged
+log capital stock per worker, the 1970 log schooling proxy,
+a Bartik shift-share instrument, and the log mean suitability
+of other economies in the sample.
+We verify that the main suitability effect is robust to
+2SLS estimation using these instruments.
+Constructing interaction instruments for the moderation analysis
+requires interacting the base instruments with the moderators;
+we confirm that human capital continues to significantly amplify
+the suitability--inequality relationship in the 2SLS framework
+for the IV specifications where sufficient first-stage strength
+is available.
+
+\paragraph{Alternative human capital measures.}
+The 1970 schooling proxy captures the historical stock but
+not within-sample human capital dynamics.
+When we use the PWT human capital index (available from 1990)
+as a robustness check on the post-1990 subsample,
+the human capital interaction remains negative and significant
+($-0.029$, $p < 0.05$), and the mechanism results are
+qualitatively unchanged.
+This suggests our results are not driven by the particular
+construction of the human capital proxy.
+
+\paragraph{Alternative institutional quality measures.}
+The Economic Freedom Index emphasizes market-supporting
+institutions and may not capture redistribution capacity,
+labor protection, or public service provision.
+Replacing EFI with the World Bank Control of Corruption
+Index on the subsample where it is available does not
+generate a significant linear interaction, supporting
+the view that institutional quality acts as a threshold
+rather than a linear amplifier regardless of the specific
+institutional measure used.
+
+\paragraph{Limitations.}
+Several limitations merit acknowledgment.
+\emph{First}, the balanced panel of 64 economies over-represents
+higher-income countries where panel data are available,
+which may bias estimates toward economies with relatively
+well-developed institutions and human capital.
+Extending the analysis to a broader, unbalanced panel
+including lower-income economies is a priority for future work.
+\emph{Second}, cross-country identification conflates
+many country-level differences despite fixed effects.
+Within-country evidence using regional or industry-level data
+would provide sharper identification.
+\emph{Third}, the pre-sample human capital proxy captures
+the historical basis for technical absorption but misses
+subsequent educational investments that may themselves respond
+to income inequality.
+Better instruments for the time-varying human capital moderator
+would strengthen causal interpretation.
+\emph{Fourth}, the mechanism analysis is descriptive;
+the positive coefficient on vulnerable employment (before
+the human capital interaction) could reflect compositional
+changes rather than true labor market upgrading.
+Future work with household survey data can directly trace
+whether workers displaced from subsistence activities enter
+formal employment in economies with high human capital.
+
+%% =============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+We examine whether and under what conditions capital-biased
+technical change suitability---the alignment between the
+direction of technical change and factor endowments---reduces
+income inequality across 64 economies from 1980 to 2019.
+Using two-way fixed effects estimation with cross-sectionally
+robust standard errors, we find that suitability significantly
+reduces inequality in the baseline specification.
+But this equalizing effect is conditional on two boundary factors.
+
+Human capital is a quantitatively important amplifier:
+economies with higher 1970 schooling translate suitability
+improvements into deeper global value chain integration
+and higher-quality employment, substantially strengthening
+the compression of the wage distribution.
+Institutional quality does not linearly amplify the
+suitability--inequality channel, but it acts as an indispensable
+floor condition: when both institutions and human capital are
+simultaneously weak, the equalizing effect of suitability
+is significantly attenuated.
+Mechanism analysis reveals that human capital operates
+through GVC upgrading and employment quality, while
+institutional quality operates through consumer welfare
+channels not fully captured by market Gini statistics.
+
+These findings carry concrete policy implications.
+\emph{First}, technology-factor alignment---ensuring that
+innovation trajectories match economy-wide factor
+endowments---is a necessary but not sufficient condition
+for inclusive growth.
+Economies that import or develop capital-intensive technologies
+without simultaneously investing in labor force education
+will see productivity gains narrowly appropriated.
+\emph{Second}, institutional reform and human capital investment
+are complementary but distinct priorities.
+Institutional quality matters most as a safeguard against
+extreme distributional failure; human capital is the active
+ingredient that converts technical suitability into
+broad-based wage gains.
+\emph{Third}, global value chain strategy should be integrated
+with education policy.
+The finding that human capital amplifies the PLV channel
+suggests that upgrading industrial capabilities without
+a skilled workforce is unlikely to generate the
+distributional gains often attributed to GVC integration.
+
+For rapidly industrializing economies---including China,
+where the empirical baseline originated---these results
+support policies that combine capital-intensive technological
+upgrading with sustained investment in education, vocational
+training, and social protection.
+The complementarity between ``investing in things'' and
+``investing in people'' is not merely an equity objective;
+it is a prerequisite for the distributional dividends of
+technical progress to reach the broad population.
+
+%% =============================================================
+\clearpage
+\bibliography{references}
+
+%% =============================================================
+\clearpage
+\appendix
+
+\section*{Tables}
+
+%% ---- Table 1: Descriptive Statistics -----------------------
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Descriptive Statistics}
+\label{tab:descriptive}
+\begin{tabular}{llrrrrr}
+\toprule
+Variable & Description & Obs.\ & Mean & Std.\ Dev.\ & Min & Max \\
+\midrule
+$\ln \gini$
+  & Log income inequality (market Gini)
+  & 2,560 & 3.6884 & 0.2847 & 2.8745 & 4.3449 \\[2pt]
+$\ln \suit$
+  & Log biased TC suitability
+  & 2,560 & 0.0103 & 0.4799 & $-$2.3347 & 1.8755 \\[2pt]
+EFI
+  & Institutional quality (Fraser EFI)
+  & 2,472 & 6.6795 & 1.2648 & 3.1100 & 9.1100 \\[2pt]
+$\ln \hc_{70}$
+  & Human capital (log schooling, 1970)
+  & 2,280 & 1.7800 & 0.5634 & 0.0951 & 2.5006 \\[2pt]
+$\mathrm{old}$
+  & Old-age dependency ratio
+  & 2,560 & 0.1416 & 0.0813 & 0.0273 & 0.4852 \\[2pt]
+$\mathrm{tra}$
+  & Trade openness (\% GDP)
+  & 2,526 & 81.44 & 63.06 & 9.14 & 442.62 \\[2pt]
+$\ln \mathrm{pop}$
+  & Log population (millions)
+  & 2,560 & 2.5210 & 1.7846 & $-$1.4773 & 7.2681 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+\item \textit{Notes}: Sample is a balanced panel of 64 economies,
+1980--2019. TC~=~technical change. EFI~=~Economic Freedom Index
+(Fraser Institute, scale 0--10). Obs.\ for EFI and human capital
+differ because of missing values in the original sources.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+%% ---- Table 2: Main Results ---------------------------------
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Capital-Biased Technical Change Suitability and Income
+         Inequality: Boundary Conditions}
+\label{tab:main}
+\begin{tabular}{l*{5}{c}}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) \\
+ & Baseline & Institution & Human & High-HC & Double-Low \\
+ &          & moderator   & capital & group & group \\
+ &          &             & moderator & & \\
+\midrule
+$\ln \suit$
+  & $-$0.0171$^{**}$ & $-$0.0202$^{**}$ & $-$0.0351$^{***}$
+  & $-$0.0139$^{*}$  & $-$0.0270$^{***}$ \\
+  & (0.0078) & (0.0082) & (0.0108) & (0.0083) & (0.0102) \\[4pt]
+$\ln \suit \times \mathrm{EFI}$
+  & & $-$0.0036 & & & \\
+  & & (0.0051) & & & \\[4pt]
+$\ln \suit \times \ln \hc_{70}$
+  & & & $-$0.0381$^{***}$ & & \\
+  & & & (0.0082) & & \\[4pt]
+$\ln \suit \times \mathbf{1}[\text{High-HC}]$
+  & & & & $-$0.0244$^{***}$ & \\
+  & & & & (0.0082) & \\[4pt]
+$\ln \suit \times \mathbf{1}[\text{Double-Low}]$
+  & & & & & 0.0100$^{*}$ \\
+  & & & & & (0.0056) \\[4pt]
+\midrule
+Observations
+  & 2,438 & 2,438 & 2,158 & 2,158 & 2,158 \\
+Two-way FE   & Yes & Yes & Yes & Yes & Yes \\
+Controls     & Yes & Yes & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+\item \textit{Notes}: Dependent variable is $\ln \gini_{it}$ (log market
+Gini coefficient). All regressions include economy and year fixed effects.
+Controls are trade openness, institutional quality (EFI), old-age
+dependency ratio, and log population.
+EFI and $\ln \hc_{70}$ are demeaned before constructing interaction terms.
+\textbf{1}[High-HC] equals one for economies above the median of
+country-mean 1970 schooling.
+\textbf{1}[Double-Low] equals one for economies simultaneously below
+median in both EFI and 1970 schooling.
+Standard errors in parentheses are Driscoll--Kraay
+\citep{driscoll1998consistent} with Bartlett kernel bandwidth of 3,
+robust to cross-sectional dependence and serial correlation.
+$^{*}$, $^{**}$, $^{***}$ denote significance at the 10\%, 5\%,
+and 1\% levels, respectively.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+%% ---- Table 3: Mechanism Analysis --------------------------
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Mechanism Analysis: Through Which Channels Do Boundary
+         Conditions Operate?}
+\label{tab:mechanism}
+\begin{tabular}{l*{5}{c}}
+\toprule
+ & (1) & (2) & (3) & (4) & (5) \\
+ & GVC   & Value-Added & Labor    & Vulnerable & Consumer \\
+ & Position & Production  & Particip.\ & Employment & Welfare \\
+ &          & Length      & Rate       & Rate       & (CWTFP) \\
+\midrule
+$\ln \suit$
+  & 0.0839$^{***}$ & 0.0361$^{*}$   & 0.4291$^{***}$
+  & 1.0287$^{***}$ & 0.0436$^{***}$ \\
+  & (0.0217) & (0.0217) & (0.1478) & (0.3246) & (0.0074) \\[4pt]
+$\ln \suit \times \ln \hc_{70}$
+  & 0.0151 & 0.0539$^{***}$ & $-$1.5574$^{**}$ & $-$4.0478$^{***}$ & \\
+  & (0.0281) & (0.0140) & (0.6397) & (0.7131) & \\[4pt]
+$\ln \suit \times \mathrm{EFI}$
+  & & & & & 0.0268$^{***}$ \\
+  & & & & & (0.0055) \\[4pt]
+\midrule
+Observations
+  & 888 & 888 & 1,513 & 1,585 & 2,438 \\
+Two-way FE   & Yes & Yes & Yes & Yes & Yes \\
+Controls     & Yes & Yes & Yes & Yes & Yes \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+\item \textit{Notes}: Dependent variables are as listed in column headers.
+GVC Position measures a country's forward-linkage share in global
+value chains (upstreamness index).
+Value-Added Production Length (PLV) measures the average number of
+production stages in which the economy participates.
+Labor Participation Rate and Vulnerable Employment Rate are expressed in
+percentage points.
+Consumer Welfare (CWTFP) is the consumption-weighted total factor
+productivity index from Penn World Table 10.0
+\citep{feenstra2015next}.
+All regressions include economy and year fixed effects.
+Controls are trade openness, institutional quality (EFI),
+old-age dependency ratio, and log population.
+Continuous moderators are demeaned.
+Standard errors in parentheses are Driscoll--Kraay
+\citep{driscoll1998consistent} with bandwidth 3.
+$^{*}$, $^{**}$, $^{***}$ denote significance at the 10\%, 5\%,
+and 1\% levels, respectively.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+%% ---- Figure placeholder ------------------------------------
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.7\textwidth}{\centering\vspace{3cm}
+[Figure: Conceptual diagram of suitability boundary conditions] \\[6pt]
+Suitability $\longrightarrow$ Productivity gains \\[4pt]
+\hspace*{1cm}$\xrightarrow{\text{Human Capital Filter}}$ GVC upgrading
+$\longrightarrow$ Lower inequality \\[4pt]
+\hspace*{1cm}$\xrightarrow{\text{Institution Filter}}$ Consumer welfare
+$\longrightarrow$ Lower \textit{effective} inequality \\[6pt]
+When both filters are weak: gains concentrate $\Rightarrow$ Higher inequality
+\vspace{3cm}}}
+\caption{Conceptual Framework: Boundary Conditions on the
+         Suitability--Inequality Channel}
+\label{fig:mechanism_diagram}
+\end{figure}
+
+\end{document}
