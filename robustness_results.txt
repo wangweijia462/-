@@ -1,0 +1,41 @@
+========================================================================
+REAL REGRESSION RESULTS (actual data)
+========================================================================
+
+========================================================================
+LAGGED SUITABILITY REGRESSIONS (PanelOLS, DK SE bw=3)
+========================================================================
+
+L1 baseline  N=2382
+  l1_lnmpkl: -0.0162 (0.0083) p=0.050*
+
+L2 baseline  N=2326
+  l2_lnmpkl: -0.0155 (0.0087) p=0.073*
+
+L3 baseline  N=2270
+  l3_lnmpkl: -0.0155 (0.0091) p=0.088*
+
+L1 + HC interaction  N=2109
+  l1_lnmpkl: -0.0335 (0.0115) p=0.004***
+  l1_lnmpkl_x_lnedu70_c: -0.0376 (0.0077) p=0.000***
+
+========================================================================
+IV/2SLS (linearmodels IV2SLS, pyhdfe FE absorption, DK SE bw=3)
+========================================================================
+
+IV (Bartik shift-share instruments (entity+year FE))  N=2270
+  KP-F(approx)=20.21  Sargan J p=0.319
+  lnmpkl: -0.0268 (0.0249) p=0.282
+
+IV (Other-country suitability instruments (entity+year FE))  N=2382
+  KP-F(approx)=21.97  Sargan J p=0.848
+  lnmpkl: -0.0901 (0.0322) p=0.005***
+
+========================================================================
+WINSORISATION (1st/99th percentile)
+========================================================================
+
+Winsorised baseline  N=2438
+  lnmpkl_w: -0.0160 (0.0075) p=0.033**
+Winsorised HC interaction  N=2158
+  lnmpkl_w_x_lnedu70_c: -0.0345 (0.0084) p=0.000***
