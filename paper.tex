@@ -718,6 +718,35 @@ $p < 0.01$), indicating robust equalizing effects even at mean
 human capital.
 Hypothesis~2 is supported.
 
+The continuous human-capital interaction is easier to see in
+Figure~\ref{fig:marginal_hc}.
+At low levels of pre-sample schooling the confidence band includes
+zero, so suitability is not estimated precisely enough to imply a
+clear reduction in inequality.
+Once $\ln \hc_{70}$ rises above roughly 1.35, the 95 percent
+confidence interval lies below zero; above the sample median,
+the estimated marginal effect becomes steadily more negative.
+
+%% ---- Figure 3: Marginal Effect of Suitability over HC ------
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.76\textwidth]{fig3_marginal_hc.pdf}
+\caption{Marginal Effect of Suitability over the Human Capital
+         Distribution}
+\label{fig:marginal_hc}
+\begin{minipage}{0.84\textwidth}
+\footnotesize
+\textit{Notes}: The solid line plots
+$\partial\ln\gini_{it}/\partial\ln\suit_{it}$
+implied by column~(3) of Table~\ref{tab:main}.
+The shaded area gives the 95 percent confidence interval computed
+from the full Driscoll--Kraay covariance matrix for
+$\ln\suit$ and $\ln\suit\times\ln\hc_{70}$.
+Vertical gray lines mark the 25th, 50th, and 75th percentiles of
+pre-sample human capital.
+\end{minipage}
+\end{figure}
+
 Column (4) replaces the continuous human capital moderator with
 a high-HC dummy (equal to one for economies above median
 country-mean schooling in 1970).
@@ -757,6 +786,32 @@ cannot propagate into labor markets broadly---while
 without it, gains concentrate rather than spread,
 but the constraint is binding only when human capital
 is also weak.
+
+Figure~\ref{fig:binscatter} shows the baseline
+suitability--inequality relationship after partialling out economy
+fixed effects, year fixed effects, and the control vector.
+The negative fitted slope in the binned scatterplot is not
+driven by a small number of high-leverage observations;
+the conditional relationship remains visible across the middle
+of the residualized distribution.
+
+%% ---- Figure 2: Conditional Binned Scatterplot ---------------
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{fig2_binscatter.pdf}
+\caption{Conditional Binned Scatterplot of Suitability and
+         Inequality}
+\label{fig:binscatter}
+\begin{minipage}{0.84\textwidth}
+\footnotesize
+\textit{Notes}: The figure plots 20 quantile bins of residualized
+$\ln\gini$ against residualized $\ln\suit$ after removing
+economy fixed effects, year fixed effects, trade openness,
+institutional quality, old-age dependency, and log population.
+The fitted line is the Frisch--Waugh--Lovell slope from the
+same partialled-out data.
+\end{minipage}
+\end{figure}
 
 Figure~\ref{fig:mechanism_diagram} illustrates the
 conceptual framework: suitability raises economy-wide productivity,
@@ -1191,6 +1246,30 @@ $^{*}$, $^{**}$, $^{***}$: 10\%, 5\%, 1\% significance.
 \end{threeparttable}
 \end{table}
 
+Figure~\ref{fig:lag_coefs} plots the three baseline lag
+coefficients with 95 percent confidence intervals.
+The visual pattern confirms what the table shows: the point
+estimates barely move from $t-1$ to $t-3$, while precision
+declines gradually as the lag length shortens the usable panel.
+
+%% ---- Figure 4: Coefficient Plot for Lagged Specs -----------
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.64\textwidth]{fig4_lag_coefs.pdf}
+\caption{Coefficient Plot for Lagged Suitability Specifications}
+\label{fig:lag_coefs}
+\begin{minipage}{0.84\textwidth}
+\footnotesize
+\textit{Notes}: Points report the coefficients on
+$\ln\suit_{t-1}$, $\ln\suit_{t-2}$, and $\ln\suit_{t-3}$
+from columns~(1)--(3) of Table~\ref{tab:lags}.
+Error bars are 95 percent confidence intervals based on
+Driscoll--Kraay standard errors.
+$p$-values for the Driscoll--Kraay test of $H_0:\beta=0$
+are annotated below each point.
+\end{minipage}
+\end{figure}
+
 \subsection{Dynamic Human Capital Proxy}
 \label{sec:dynhc}
 
@@ -1309,7 +1388,7 @@ the boundary tests.
 correlations rather than causal chains.
 Mediation analysis with valid instruments for the
 intermediate variables (GVC position, vulnerable employment)
-would be needed to formally attribute the suitability--inequality
+would be needed to formally attribute the suitability-inequality
 channel to GVC upgrading versus employment quality versus
 welfare diffusion.
 
@@ -1337,7 +1416,7 @@ and lagged specifications, confirming a robust causal
 relationship rather than a correlation driven by
 omitted productivity trends.
 Institutional quality does not linearly amplify the
-suitability--inequality channel, but it acts as an indispensable
+suitability-inequality channel, but it acts as an indispensable
 floor condition: when both institutions and human capital are
 simultaneously weak, the equalizing effect of suitability
 is significantly attenuated.
