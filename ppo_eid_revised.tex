@@ -111,6 +111,30 @@ investment universe as defined solely by price and volume
 microstructure, ignoring the regulatory-risk signal embedded in
 disclosure scores.
 
+Portfolio optimization has evolved from Markowitz's
+\citeyearpar{markowitz1952portfolio} mean-variance framework through
+multifactor models \citep{famafrench1993common} to machine-learning
+approaches. \citet{demiguel2009optimal} show that naive equal-weighting
+frequently matches or beats parametric optimizers out-of-sample,
+motivating the search for information sets rich enough to deliver
+genuine out-of-sample gains. Deep reinforcement learning has emerged
+as a natural candidate for dynamic portfolio problems because it does
+not require specifying a transition model \citep{deng2017deep,zhang2020},
+but existing implementations restrict state spaces to price and volume
+microstructure. In parallel, a growing literature documents that
+environmental and ESG characteristics carry systematic risk information
+\citep{renneboog2008socially,friede2015,bolton2021carbon}: firms with
+higher carbon exposure earn positive risk premia \citep{hong2019climate},
+and green assets display lower tail risk during regulatory stress events
+\citep{pastor2021,pedersen2021}. Yet the mechanism through which
+environmental disclosure enters DRL training dynamics has not been
+examined. The information-disclosure literature suggests a route: higher
+quality disclosure lowers information asymmetry
+\citep{verrecchia2001essays,lambert2007accounting}, which reduces the
+variance of the reward signal the agent observes. Lower reward variance,
+in turn, implies more consistent gradient directions across training
+runs --- the quantity measured by normalized Frobenius distance.
+
 The default assumption in DRL portfolio optimization
 \citep{schulman2017proximal,mnih2015} is that firm-level environmental
 data either get priced in quickly or are redundant with standard
@@ -206,17 +230,18 @@ empirical test annotation.
 %% ---- Figure 1: Policy-risk filtering mechanism (inline) ----
 \begin{figure}[!t]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
-  node distance=0.8cm and 1.2cm,
+  node distance=0.8cm and 1.4cm,
   box/.style={rectangle, rounded corners=3pt, draw=black!70,
-    fill=black!4, align=center, minimum height=0.7cm, text width=2.0cm,
-    font=\footnotesize},
+    fill=black!4, align=center, minimum height=0.75cm, text width=2.3cm,
+    font=\small},
   mbox/.style={rectangle, rounded corners=3pt, draw=blue!60!black,
-    fill=blue!8, align=center, minimum height=0.7cm, text width=2.0cm,
-    font=\footnotesize},
+    fill=blue!8, align=center, minimum height=0.75cm, text width=2.3cm,
+    font=\small},
   rbox/.style={rectangle, rounded corners=3pt, draw=green!50!black,
-    fill=green!8, align=center, minimum height=0.7cm, text width=2.1cm,
-    font=\footnotesize},
+    fill=green!8, align=center, minimum height=0.75cm, text width=2.4cm,
+    font=\small},
   arrow/.style={-{Latex[length=2.5mm]}, thick, draw=black!70}
 ]
 \node[box] (eid)   {Public EID\\Disclosure};
@@ -230,23 +255,24 @@ empirical test annotation.
 \draw[arrow] (shock) -- (lpm);
 \draw[arrow] (lpm) -- (grad);
 \draw[arrow] (grad) -- (frob);
-\node[box, below=0.8cm of info,  text width=2.2cm, font=\scriptsize,
+\node[box, below=0.9cm of info,  text width=2.5cm, font=\footnotesize,
   draw=gray!60, fill=gray!5]
   (t1) {Test: Table~\ref{tab:alpha_test}\\$\hat{a}_1=-0.016^{**}$};
-\node[box, below=0.8cm of lpm,   text width=2.2cm, font=\scriptsize,
+\node[box, below=0.9cm of lpm,   text width=2.5cm, font=\footnotesize,
   draw=gray!60, fill=gray!5]
   (t2) {Mediation Step 1\\$\hat\beta_1=-0.214^{***}$};
-\node[box, below=0.8cm of grad,  text width=2.2cm, font=\scriptsize,
+\node[box, below=0.9cm of grad,  text width=2.5cm, font=\footnotesize,
   draw=gray!60, fill=gray!5]
   (t3) {Mediation Step 2\\$\hat\delta_1=+0.318^{***}$};
-\node[box, below=0.8cm of frob,  text width=2.2cm, font=\scriptsize,
+\node[box, below=0.9cm of frob,  text width=2.5cm, font=\footnotesize,
   draw=gray!60, fill=gray!5]
   (t4) {Primary Result\\$\Delta\bar{D}=36\%$, $p<.001$};
 \draw[arrow, gray!60, dashed] (info) -- (t1);
 \draw[arrow, gray!60, dashed] (lpm)  -- (t2);
 \draw[arrow, gray!60, dashed] (grad) -- (t3);
 \draw[arrow, gray!60, dashed] (frob) -- (t4);
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Policy-Risk Filtering Mechanism: EID to Parameter Stability.
 Top row shows the hypothesized causal chain; bottom row shows empirical
 tests at each step. The chain is a Motivating Assumption; each box
@@ -276,9 +302,14 @@ classification.
 \end{proposition}
 
 \paragraph{HMM specification.}
-The two-state HMM uses Gaussian emission distributions fitted to
-20-day rolling log-returns, estimated via the Baum--Welch algorithm
-with $k$-means initialization. The estimated steady-state probabilities
+The two-state HMM follows the regime-switching framework of
+\citet{hamilton1989new}, using Gaussian emission distributions fitted
+to 20-day rolling log-returns and estimated via the Baum--Welch
+algorithm with $k$-means initialization. Asset allocation under
+regime switching has been extensively studied
+\citep{ang2002international}; our contribution is to map the HMM
+posterior continuously into the reward weight $\lambda_2(t)$ rather
+than using a hard classification rule. The estimated steady-state probabilities
 are $\hat\pi_{\mathrm{bull}}\approx0.61$ and
 $\hat\pi_{\mathrm{bear}}\approx0.39$, with average regime durations of
 approximately 4.2 months (bull) and 2.6 months (bear). The transition
@@ -373,6 +404,8 @@ Rollout length $T$ & 252 trading days \\
 \end{table}
 
 \paragraph{Implementation.}
+The ReLU-based feedforward architecture follows standard deep learning
+practice \citep{lecun2015deep}. Training uses
 Python~3.10, \texttt{stable-baselines3}~v2.1, \texttt{PyTorch}~v2.1,
 CUDA~11.8. After each
 training run, \texttt{state\_dict} tensors are extracted layer-by-layer
@@ -465,10 +498,15 @@ The primary dataset comprises 59,051 firm-year observations from the
 Hexun Environmental Information Disclosure Database, which aggregates
 annual corporate environmental reports, sustainability reports, and
 regulatory filings for Chinese A-share listed companies into a
-composite score from 0 to 100, with typical values in the 0--50 range. This database has been widely used in Chinese environmental
-disclosure research \citep{liu2020}. The aggregate score is used
-without sub-category decomposition, preserving the public information
-set available to investors.
+composite score from 0 to 100, with typical values in the 0--50 range. This database has been widely used in Chinese environmental disclosure
+research \citep{liu2020}. Voluntary environmental disclosure choices
+reflect strategic responses to regulatory pressure
+\citep{clarkson2011voluntary}, and China's mandatory disclosure
+expansion after 2015 created plausibly exogenous variation in EID
+availability that could support future causal designs
+\citep{cai2016corporate}. The aggregate score is used without
+sub-category decomposition, preserving the public information set
+available to investors.
 
 \paragraph{Data integrity.}
 EID scores enter the trading environment only after their public release
@@ -1050,8 +1088,13 @@ The framework's practical value is as a \emph{policy-risk filter}: when
 market stress windows occur, tilting toward firms with transparent
 environmental governance records is associated with lower left-tail
 exposure, consistent with pre-disclosed regulatory adaptation capacity.
+The result also speaks to the broader question of whether ESG
+information earns a return premium or merely reflects risk
+\citep{pastor2021,bolton2021carbon}: our evidence suggests a third
+channel --- informational quality that improves the training dynamics
+of the optimization algorithm itself.
 
-\paragraph{Separability of stability and performance.}
+\subsubsection*{Separability of Stability and Performance}
 Model D posts a Sharpe ratio of 0.44 at $c=0.002$, outperforming
 Model A's 0.36, yet its mean Frobenius distance of $\bar{D}=0.471$
 is statistically indistinguishable from Model A at $p=0.193$. Model C
@@ -1073,7 +1116,7 @@ of that foundation.
 
 \subsection{Limitations}
 
-\paragraph{Causal identification.}
+\subsubsection*{Causal Identification}
 The full causal chain is not empirically established. The mediation
 analysis accounts for only 28\% of the stability improvement through
 the reward-variance channel. A cleaner design would be needed for causal claims --- ideally a
@@ -1081,19 +1124,19 @@ difference-in-differences exploiting staggered mandatory disclosure
 requirements under China's 2015 Environmental Protection Law
 amendments.
 
-\paragraph{Transaction costs and market impact.}
+\subsubsection*{Transaction Costs and Market Impact}
 DRL strategies exhibit higher turnover than passive benchmarks; Model C
 turns over approximately 58\% annually. The net Sharpe advantage persists at 0.1--0.3\%
 per-turnover costs but would erode at costs above $\approx$0.5\%.
 Price-impact costs from large trades are not modeled.
 
-\paragraph{Single market, single algorithm.}
+\subsubsection*{Single Market, Single Algorithm}
 The EID scoring system, regulatory environment, and market microstructure
 are specific to Chinese A-shares. Cross-country generalizability is
 untested. Whether similar stability benefits appear in Soft Actor-Critic,
 Twin Delayed DDPG, or attention-based architectures remains open.
 
-\paragraph{Disclosure quality vs.\ environmental outcomes.}
+\subsubsection*{Disclosure Quality versus Environmental Outcomes}
 EID scores measure transparency and completeness of reporting, not
 actual emissions or regulatory compliance performance.
 
@@ -1124,25 +1167,24 @@ the component to prioritize if the goal is a model that is robust to
 retraining on new data; regime weighting adds value as a
 return-enhancement layer on top of that foundation.
 
-\paragraph{Limitations.}
-The full causal chain from EID to gradient consistency is not
-empirically established. The mediation analysis accounts for 28\% of
-the stability improvement through the reward-variance channel; the
-remaining 72\% is plausibly attributable to direct informational
-effects on state transitions, but testing this requires a
-stronger identification strategy---ideally a difference-in-differences
-design exploiting staggered mandatory disclosure adoption. Net-return
-advantages persist at 0.1--0.3\% per-turnover costs but would erode
-at higher levels not modeled here. All results are calibrated to
-Chinese A-shares; whether similar EID-stability relationships hold in
+Several limitations qualify these conclusions. The full causal chain
+from EID to gradient consistency is not empirically established: the
+mediation analysis accounts for 28\% of the stability improvement
+through the reward-variance channel, and testing the remaining 72\%
+requires a stronger identification strategy --- ideally a
+difference-in-differences design exploiting staggered mandatory
+disclosure adoption \citep{cai2016corporate}. Net-return advantages
+persist at 0.1--0.3\% per-turnover costs but would erode at higher
+levels not modeled here. All results are calibrated to Chinese
+A-shares; whether analogous EID-stability relationships hold in other
 markets with different disclosure regimes remains an open question.
 
-\paragraph{Future work.}
-(1) Quasi-natural experiment exploiting staggered mandatory disclosure
-for causal identification. (2) Integration of Scope 1--3 emissions data.
-(3) Testing across SAC, TD3, and attention-based architectures. (4)
-Cross-country validation. (5) Real-time stability monitoring for
-automated retraining triggers.
+Future directions include quasi-natural experiments exploiting
+staggered disclosure adoption for causal identification, integration
+of Scope 1--3 emissions data alongside governance EID scores, testing
+the Frobenius diagnostic across Soft Actor-Critic, Twin Delayed DDPG,
+and attention-based architectures \citep{lecun2015deep}, and
+cross-country validation as ESG disclosure regimes expand globally.
 
 %% =============================================================
 \section*{Funding}
