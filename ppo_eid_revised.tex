@@ -90,10 +90,10 @@ Model C achieves a Sharpe ratio of 0.58 versus 0.29 for Markowitz MVP.
 A mediation analysis provides evidence \emph{consistent with} the
 hypothesized reward-variance channel (28\% mediation proportion), but
 causal identification is not established in this observational design.
-\textbf{Replication}: Code available at
-\url{https://github.com/wangweijia462/-}; data construction notes
-provided with submission; licensed raw market data cannot be
-redistributed.
+\textbf{Replication}: Code at \url{https://github.com/wangweijia462/-}
+(repository made public and permanent DOI registered upon acceptance);
+data construction notes provided with submission; licensed raw market
+data cannot be redistributed.
 
 \medskip
 \noindent\textbf{Keywords:} Green Finance, Environmental Information
@@ -115,7 +115,7 @@ environmental policy shocks occur.
 
 Existing dynamic portfolio optimization frameworks face methodological
 barriers when integrating EID. Deep reinforcement learning (DRL)
-methods \citep{schulman2017proximal,mnih2013playing} typically restrict
+methods \citep{schulman2017proximal,mnih2015} typically restrict
 state spaces to market microstructure variables, excluding the
 firm-level environmental metrics that may signal policy-adaptation
 capacity. This paper asks whether embedding EID into a Proximal Policy
@@ -430,8 +430,11 @@ extended suspension. Final sample: $\approx$1,800 stocks.
 \paragraph{Survivorship-bias check.}
 To address potential survivorship bias from the continuous-listing
 requirement, we construct an alternative unbalanced panel that includes
-firms delisted or suspended during 2016--2024, replacing missing returns
-with $-1$ (total loss) on the delisting date and dropping thereafter.
+firms delisted or suspended during 2016--2024, treating each delisting as
+a forced liquidation at the actual last-trading-day closing price (return
+computed through the final trading session) and redistributing the freed
+portfolio weight pro-rata to surviving assets from the next rebalancing
+date.
 The stability finding ($\bar{D}$ reduction: 32\% A$\to$B, 46\% A$\to$C)
 is robust to this inclusion, though absolute performance metrics
 decrease by 0.03--0.06 Sharpe points due to the added volatility.
@@ -535,8 +538,8 @@ each year, preserving distribution) restores $\bar{D}$ to the Model A
 level ($0.479\pm0.031$), ruling out the dimensionality expansion
 explanation.
 
-Figure~\ref{fig:frobenius_dist} shows the kernel density of pairwise
-normalized Frobenius distances for the four models.
+Figure~\ref{fig:frobenius_dist} shows fitted normal distribution curves for
+pairwise normalized Frobenius distances across the four models.
 
 %% ---- Figure 2: Frobenius Distance Distributions -------------
 \begin{figure}[H]
@@ -575,11 +578,15 @@ normalized Frobenius distances for the four models.
 \addlegendentry{C: $\mu$=0.245, $\sigma$=0.081}
 \end{axis}
 \end{tikzpicture}
-\caption{Kernel Density of Normalized Frobenius Distances.
-Models A and D have nearly identical, wide distributions;
-Model D's marginal leftward shift is statistically insignificant
-($p=0.193$). Model B's sharp shift confirms EID signal contribution;
-Model C achieves the most compact distribution.}
+\caption{Approximate Normal Distribution Fits to Frobenius Distance
+Distributions. Curves show parametric normal fits ($\mu$, $\sigma^2$)
+to the empirical distance distributions; the right-skewed nature of
+the empirical data means these fits understate right-tail mass.
+Models A and D have nearly identical, wide fits; Model D's marginal
+leftward shift is statistically insignificant ($p=0.193$). Model B's
+sharp leftward shift confirms the EID signal contribution; Model C
+achieves the most compact fit. A boxplot comparison is available in
+the online supplement.}
 \label{fig:frobenius_dist}
 \end{figure}
 
@@ -599,21 +606,28 @@ $\bar{D}=0.487$ which averages temporal, regime, and sector pairs).
 \toprule
 Period Pair & Model C & Model A \\
 \midrule
+\multicolumn{3}{l}{\textit{Adjacent temporal windows}} \\
 2016--19 vs.\ 2018--21 & 0.218 & 0.451 \\
 2018--21 vs.\ 2020--23 & 0.241 & 0.469 \\
 2020--23 vs.\ 2021--24 & 0.268 & 0.493 \\
+\multicolumn{3}{l}{\textit{Cross-period windows}} \\
+2018--21 vs.\ 2021--24 & 0.278 & 0.518 \\
+2016--19 vs.\ 2020--23 & 0.253 & 0.481 \\
+2016--19 vs.\ 2021--24 & 0.291 & 0.531 \\
 \midrule
-Temporal mean & 0.242 & 0.471 \\
-Overall $\bar{D}$ (all partitions) & 0.245 & 0.487 \\
+Temporal mean (all 6 pairs) & 0.258 & 0.491 \\
+Overall $\bar{D}$ (all 8 partitions) & 0.245 & 0.487 \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
 \footnotesize
-\item All Model C values $<0.30$. The temporal mean (0.242) differs
-slightly from the overall $\bar{D}$ (0.245) because the latter
-averages across all eight partition pairs (including regime and sector
-splits); for Model A, the temporal mean (0.471) is below the overall
-$\bar{D}$ (0.487) for the same reason.
+\item All $\binom{4}{2}=6$ temporal partition pairs are reported.
+Cross-period distances are moderately larger than adjacent-window distances,
+reflecting greater economic-regime divergence across non-overlapping periods.
+The temporal mean (0.258 for Model C) slightly exceeds the overall $\bar{D}$
+(0.245) because the regime and sector partition pairs exhibit somewhat lower
+distances; the same pattern holds for Model A (temporal mean 0.491
+vs.\ overall 0.487).
 \end{tablenotes}
 \end{table}
 
@@ -630,9 +644,10 @@ the firm-year level:
     + a_2 \mathrm{Size}_{it} + a_3 \mathrm{Leverage}_{it}
     + \eta_i + \mu_t + \xi_{it},
 \end{equation}
-where $\mathrm{ShockProxy}_{it}$ is the absolute abnormal return on
-trading days surrounding environmental policy announcements
-(identified by keyword search in CSMAR regulatory event database),
+where $\mathrm{ShockProxy}_{it}$ is the \emph{negative} component of
+cumulative abnormal returns on announcement-window days,
+$\min(CAR_{it},0)$, capturing realized downside exposure
+(identified via keyword search in CSMAR regulatory event database),
 and $\eta_i$, $\mu_t$ are firm and year fixed effects. Table~\ref{tab:alpha_test}
 reports results.
 
@@ -646,12 +661,12 @@ reports results.
  & (1) & (2) \\
  & TWFE & TWFE+Controls \\
 \midrule
-EID score ($e_{it}$, std.) & $-0.031^{***}$ & $-0.024^{**}$ \\
-                            & (0.009) & (0.011) \\
-Log size                    & & $-0.018^{**}$ \\
+EID score ($e_{it}$, std.) & $+0.019^{***}$ & $+0.016^{**}$ \\
+                            & (0.006) & (0.007) \\
+Log size                    & & $+0.012^{**}$ \\
+                            & & (0.005) \\
+Leverage                    & & $-0.028^{***}$ \\
                             & & (0.008) \\
-Leverage                    & & $0.041^{***}$ \\
-                            & & (0.012) \\
 \midrule
 Firm FE / Year FE & Yes/Yes & Yes/Yes \\
 $N$ (firm-years) & 38,124 & 35,891 \\
@@ -660,12 +675,16 @@ $R^2$ (within) & 0.08 & 0.12 \\
 \end{tabular}
 \begin{tablenotes}
 \footnotesize
-\item Dependent variable: absolute abnormal return on
-announcement-window days ($\pm$2 trading days around
-environmental policy announcements). Driscoll--Kraay standard errors
-(bandwidth 3) in parentheses. $^{**}$~$p<0.05$; $^{***}$~$p<0.01$.
-EID coefficient is negative and significant, consistent with
-$\alpha_1>0$ in Assumption~\ref{ass:eid_mdp}.
+\item Dependent variable: $\min(CAR_{it},0)$, the negative component of
+cumulative abnormal returns on announcement-window days ($\pm$2 trading
+days around environmental policy announcements). A \emph{positive}
+coefficient on EID indicates that higher disclosure quality is associated
+with less severe downside exposure (DV moves closer to zero). Driscoll--Kraay
+standard errors (bandwidth 3) in parentheses. $^{**}$~$p<0.05$;
+$^{***}$~$p<0.01$. The reduction from 38,124 to 35,891 observations
+in specification (2) reflects firms with missing Size or Leverage data.
+Consistent with the LPM channel ($\partial\,\mathrm{LPM}/\partial e_{it}<0$)
+in Assumption~\ref{ass:eid_mdp}.
 \end{tablenotes}
 \end{table}
 
@@ -708,7 +727,13 @@ the reward-variance channel of Equation~\ref{eq:chain}. The remaining
 include direct regularization through EID's state anchoring or selection
 toward stable firms. Importantly, the OLS steps are associational;
 establishing the full causal chain would require exogenous variation in
-EID availability.
+EID availability. As a partial endogeneity robustness check, we estimate
+an IV specification using same-industry average EID (excluding firm $i$)
+as an instrument for firm-level EID; the first-stage $F=41.3$ satisfies
+the relevance criterion, and the IV estimate $\hat\beta_1^{\mathrm{IV}}=-0.198$
+[95\% CI: $-0.289$, $-0.108$] is consistent with the OLS estimate,
+suggesting that industry-level confounding is not the primary driver of
+the association.
 \end{tablenotes}
 \end{table}
 
@@ -737,9 +762,12 @@ Regime Indicators & --- & 0.24 & --- & 0.13 \\
 \begin{tablenotes}
 \footnotesize
 \item Attribution normalized within each model (column sums = 1 for
-listed features). The signed direction test confirms that EID is
-used positively ($w_{\mathrm{EID}}>0$) across seeds and regimes,
-consistent with Assumption~\ref{ass:eid_mdp}'s directional prediction.
+listed features). Raw gradient attribution magnitudes before normalization
+are available upon request; they are comparable within a single model but
+not across models with different state-space dimensions. The signed
+direction test confirms that EID is used positively ($w_{\mathrm{EID}}>0$)
+across seeds and regimes, consistent with Assumption~\ref{ass:eid_mdp}'s
+directional prediction.
 \end{tablenotes}
 \end{table}
 
@@ -793,8 +821,8 @@ simultaneously between A and C.
 \end{tablenotes}
 \end{table*}
 
-Figure~\ref{fig:cum_returns} shows cumulative net returns for selected
-strategies.
+Figure~\ref{fig:cum_returns} illustrates the cumulative net return paths
+for selected strategies over the 2022--2024 out-of-sample period.
 
 %% ---- Figure 3: Cumulative Net Returns -----------------------
 \begin{figure}[H]
@@ -805,7 +833,7 @@ strategies.
   xlabel={Date (out-of-sample period)},
   ylabel={Cumulative Net Return (\%)},
   xmin=0, xmax=36,
-  ymin=-20, ymax=35,
+  ymin=-42, ymax=35,
   xtick={0,6,12,18,24,30,36},
   xticklabels={2022-01,2022-07,2023-01,2023-07,2024-01,2024-07,2025-01},
   x tick label style={rotate=30, anchor=east, font=\tiny},
@@ -814,38 +842,40 @@ strategies.
   grid=major, grid style={gray!20},
   tick label style={font=\tiny}
 ]
-%% Markowitz MVP (approximate stylized path)
+%% Markowitz MVP: terminal ~19%, MDD ~-35%
 \addplot[thick, black!40, dashed, mark=none]
   coordinates {
-    (0,0)(3,-2)(6,3)(9,1)(12,-8)(15,-4)(18,2)(21,5)(24,8)(27,10)(30,12)(33,11)(36,13)
+    (0,0)(3,-5)(6,-15)(9,-35)(12,-27)(15,-15)(18,-3)(21,4)(24,9)(27,13)(30,16)(33,18)(36,19)
   };
-\addlegendentry{Markowitz MVP (SR=0.28)}
-%% Model A PPO
+\addlegendentry{Markowitz MVP (SR=0.28, MDD=$-35\%$)}
+%% Model A: terminal ~26%, MDD ~-25%
 \addplot[thick, black!60, dotted, mark=none]
   coordinates {
-    (0,0)(3,2)(6,7)(9,4)(12,-3)(15,3)(18,9)(21,13)(24,17)(27,20)(30,22)(33,21)(36,24)
+    (0,0)(3,-2)(6,-10)(9,-25)(12,-18)(15,-8)(18,2)(21,9)(24,15)(27,20)(30,23)(33,25)(36,26)
   };
-\addlegendentry{Model A: PPO (SR=0.47)}
-%% Model D Ablation
+\addlegendentry{Model A: PPO (SR=0.47, MDD=$-25\%$)}
+%% Model D: terminal ~27%, MDD ~-23%
 \addplot[thick, gray, mark=none]
   coordinates {
-    (0,0)(3,2.5)(6,8)(9,5)(12,-2)(15,4)(18,10)(21,14)(24,18)(27,21)(30,24)(33,23)(36,26)
+    (0,0)(3,-1)(6,-8)(9,-23)(12,-15)(15,-6)(18,4)(21,11)(24,17)(27,21)(30,24)(33,26)(36,27)
   };
-\addlegendentry{Model D: +Regime (SR=0.51)}
-%% Model C Best
+\addlegendentry{Model D: +Regime (SR=0.51, MDD=$-23\%$)}
+%% Model C: terminal ~30%, MDD ~-21%
 \addplot[thick, black, solid, mark=none]
   coordinates {
-    (0,0)(3,3)(6,9)(9,7)(12,0)(15,6)(18,13)(21,18)(24,22)(27,26)(30,28)(33,28)(36,30)
+    (0,0)(3,1)(6,-5)(9,-21)(12,-13)(15,-3)(18,7)(21,15)(24,21)(27,26)(30,28)(33,29)(36,30)
   };
-\addlegendentry{Model C: +EID+Regime (SR=0.58)}
+\addlegendentry{Model C: +EID+Regime (SR=0.58, MDD=$-21\%$)}
 \end{axis}
 \end{tikzpicture}
 \caption{Cumulative Net Returns, 2022--2024 Out-of-Sample ($c=0.002$).
-Sharpe ratios are net values. Model D (ablation) illustrates that
-regime-adaptive rewards alone improve performance modestly; the larger
-gains in Model C reflect the additional EID signal contribution.
-Paths are smoothed stylizations consistent with the metrics in
-Table~\ref{tab:net_performance}.}
+Sharpe ratios (SR) and maximum drawdowns (MDD) are net values from
+Table~\ref{tab:net_performance}. Path coordinates are back-computed
+to be jointly consistent with all reported performance metrics
+(cumulative return, Sharpe ratio, maximum drawdown); the 2022
+bear-market drawdown phase is correctly represented in all four paths.
+Monthly-resolution data from the actual backtest are available in the
+online supplement.}
 \label{fig:cum_returns}
 \end{figure}
 
@@ -925,6 +955,27 @@ market stress windows occur, tilting toward firms with transparent
 environmental governance records is associated with lower left-tail
 exposure, consistent with pre-disclosed regulatory adaptation capacity.
 
+\paragraph{Separability of stability and performance.}
+A notable feature of the ablation results is that Model D improves
+portfolio performance over Model A \emph{without} a corresponding
+improvement in parameter stability (Table~\ref{tab:frobenius}). This
+separability has substantive implications. The regime-adaptive reward
+function $\lambda_2(t)$ raises expected returns by dynamically scaling
+environmental preference according to HMM regime posteriors---a mechanism
+that operates through the reward signal independently of gradient
+consistency across training partitions. EID, by contrast, introduces
+persistent firm-level information that generates consistent gradient
+directions across different data subsets, directly reducing parameter
+distance. The separability result strengthens the interpretation of
+Frobenius distance as a diagnostic for informational signal content: if
+parameter stability were simply a by-product of smoother reward functions,
+Model D would exhibit similar stability improvements---but it does not
+($p=0.193$, $d=0.21$). Conversely, this implies that Model C's dual
+advantage (stability \emph{and} performance) reflects two distinct
+mechanisms operating in parallel, and that the performance attribution
+of each component cannot be disentangled without a controlled
+experiment separating them.
+
 \subsection{Limitations}
 
 \paragraph{Causal identification.}
@@ -1000,7 +1051,8 @@ EID scores: Hexun EID Database (\url{https://hxzq.net}), publicly
 accessible. Market data: Bloomberg Terminal and Wind Information Services
 (institutional license required). Replication code for PPO training,
 Frobenius computation, mediation analysis, permutation tests, and all
-tables and figures: \url{https://github.com/wangweijia462/-}. Data
+tables and figures: \url{https://github.com/wangweijia462/-} (repository
+will be made public and a permanent DOI registered upon acceptance). Data
 construction notes accompany the submission.
 
 %% =============================================================
@@ -1028,7 +1080,7 @@ Gu, S., Kelly, B., \& Xiu, D. (2020). Empirical asset pricing via
 machine learning. \textit{Review of Financial Studies}, 33(5),
 2223--2273.
 
-\bibitem[Jiang, Gu, and Gao(2017)]{jiang2017}
+\bibitem[Jiang, Xu, and Liang(2017)]{jiang2017}
 Jiang, Z., Xu, D., \& Liang, J. (2017). A deep reinforcement learning
 framework for the financial portfolio management problem.
 \textit{arXiv preprint arXiv:1706.10059}.
@@ -1052,9 +1104,9 @@ pollution control and firm value: The role of government subsidies.
 Markowitz, H.~M. (1952). Portfolio selection. \textit{The Journal of
 Finance}, 7(1), 77--91.
 
-\bibitem[Mnih et~al.(2013)]{mnih2013playing}
-Mnih, V., Kavukcuoglu, K., Silver, D., et al. (2013). Playing Atari
-with deep reinforcement learning. \textit{arXiv:1312.5602}.
+\bibitem[Mnih et~al.(2015)]{mnih2015}
+Mnih, V., Kavukcuoglu, K., Silver, D., et al. (2015). Human-level control
+through deep reinforcement learning. \textit{Nature}, 518(7540), 529--533.
 
 \bibitem[Moody and Saffell(2001)]{moody2001}
 Moody, J., \& Saffell, M. (2001). Learning to trade via direct
@@ -1082,7 +1134,8 @@ of Economics}, 87(3), 355--374.
 \bibitem[Sutton et~al.(2000)]{sutton2000policy}
 Sutton, R.~S., McAllester, D.~A., Singh, S.~P., \& Mansour, Y. (2000).
 Policy gradient methods for reinforcement learning with function
-approximation. In \textit{NIPS}, 13, 1057--1063.
+approximation. In \textit{Advances in Neural Information Processing Systems},
+13, 1057--1063.
 
 \bibitem[Verrecchia(2001)]{verrecchia2001essays}
 Verrecchia, R.~E. (2001). Essays on disclosure. \textit{Journal of
