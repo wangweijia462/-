@@ -76,9 +76,8 @@ with} improved neural-network structural stability. Using 59,051
 firm-year EID observations (Hexun EID Database) for Chinese listed
 companies from 2008 to 2025 and out-of-sample portfolio tests for
 2022--2024, the PPO+EID+Regime model reduces normalized Frobenius
-parameter distance by 36\% (A$\to$B, bootstrap CI: [27\%, 46\%]) and
-50\% (A$\to$C, CI: [41\%, 59\%]) relative to baseline PPO ($p<0.001$;
-effect size $d=1.84$). A permutation test confirms this improvement
+parameter distance by 36\% (A$\to$B, bootstrap CI: [27\%, 46\%], $d=1.84$) and
+50\% (A$\to$C, CI: [41\%, 59\%], $d=2.01$) relative to baseline PPO ($p<0.001$). A permutation test confirms this improvement
 reflects EID's firm-level economic content rather than dimensionality
 expansion. An ablation model (PPO+Regime, no EID) achieves a
 statistically insignificant 3.3\% reduction in Frobenius distance,
@@ -180,7 +179,11 @@ Assumption~\ref{ass:eid_mdp} is a \emph{sufficient condition}, not a
 proved theorem. The sign constraint $\alpha_1>0$ is directly testable:
 Table~\ref{tab:alpha_test} (Section~\ref{sec:mechanism_test}) reports
 a firm-level regression of realized policy-shock exposure on EID scores,
-providing an empirical check.
+providing an empirical check. We additionally assume that policy shocks
+are on net associated with \emph{negative} firm-level abnormal returns,
+consistent with the negative downside-loss estimates in
+Table~\ref{tab:alpha_test}; if shocks were predominantly positive
+(e.g., subsidy announcements), the LPM channel would not apply.
 \end{remark}
 
 \paragraph{Hypothesized mechanism chain.}
@@ -196,6 +199,60 @@ providing an empirical check.
 \end{equation}
 This chain has intermediate-variable predictions tested in
 Section~\ref{sec:mechanism_test}.
+Figure~\ref{fig:mechanism} visualizes each link with its corresponding
+empirical test annotation.
+
+%% ---- Figure 1: Policy-risk filtering mechanism (inline) ----
+\begin{figure*}[!t]
+\centering
+\begin{tikzpicture}[
+  node distance=0.9cm and 1.5cm,
+  box/.style={rectangle, rounded corners=3pt, draw=black!70,
+    fill=black!4, align=center, minimum height=0.75cm, text width=2.5cm,
+    font=\small},
+  mbox/.style={rectangle, rounded corners=3pt, draw=blue!60!black,
+    fill=blue!8, align=center, minimum height=0.75cm, text width=2.5cm,
+    font=\small},
+  rbox/.style={rectangle, rounded corners=3pt, draw=green!50!black,
+    fill=green!8, align=center, minimum height=0.75cm, text width=2.6cm,
+    font=\small},
+  arrow/.style={-{Latex[length=2.5mm]}, thick, draw=black!70}
+]
+\node[box] (eid)   {Public EID\\Disclosure};
+\node[mbox, right=of eid]  (info)   {Lower\\Info Asymmetry};
+\node[mbox, right=of info] (shock)  {Lower Policy-\\Shock Ambiguity};
+\node[mbox, right=of shock](lpm)    {Lower Left-Tail\\Reward Noise};
+\node[mbox, right=of lpm]  (grad)   {Lower Gradient\\Variance};
+\node[rbox, right=of grad] (frob)   {Lower Frobenius\\Distance};
+\draw[arrow] (eid) -- (info);
+\draw[arrow] (info) -- (shock);
+\draw[arrow] (shock) -- (lpm);
+\draw[arrow] (lpm) -- (grad);
+\draw[arrow] (grad) -- (frob);
+\node[box, below=0.9cm of info,  text width=2.8cm, font=\scriptsize,
+  draw=gray!60, fill=gray!5]
+  (t1) {Test: Table~\ref{tab:alpha_test}\\$\hat{a}_1=-0.016^{**}$};
+\node[box, below=0.9cm of lpm,   text width=2.8cm, font=\scriptsize,
+  draw=gray!60, fill=gray!5]
+  (t2) {Mediation Step 1\\$\hat\beta_1=-0.214^{***}$};
+\node[box, below=0.9cm of grad,  text width=2.8cm, font=\scriptsize,
+  draw=gray!60, fill=gray!5]
+  (t3) {Mediation Step 2\\$\hat\delta_1=+0.318^{***}$};
+\node[box, below=0.9cm of frob,  text width=2.8cm, font=\scriptsize,
+  draw=gray!60, fill=gray!5]
+  (t4) {Primary Result\\$\Delta\bar{D}=36\%$, $p<.001$};
+\draw[arrow, gray!60, dashed] (info) -- (t1);
+\draw[arrow, gray!60, dashed] (lpm)  -- (t2);
+\draw[arrow, gray!60, dashed] (grad) -- (t3);
+\draw[arrow, gray!60, dashed] (frob) -- (t4);
+\end{tikzpicture}
+\caption{Policy-Risk Filtering Mechanism: EID to Parameter Stability.
+Top row shows the hypothesized causal chain (Equation~\ref{eq:chain}).
+Bottom row shows the empirical tests at each step. The chain is a
+\emph{Motivating Assumption}; each box reports associational evidence
+consistent with that link.}
+\label{fig:mechanism}
+\end{figure*}
 
 \begin{proposition}[Unified Regime-Adaptive Green Preference]
 \label{prop:regime}
@@ -235,9 +292,15 @@ The base state vector at time $t$ is $S_t=\{P_t, I_t, E_t^{\mathrm{raw}}\}$:
 \end{itemize}
 EID scores are monotonically normalized:
 $\tilde{e}_{it}=e_{it}^{\mathrm{raw}}/\max_{i,t\in\mathcal{T}_{\mathrm{train}}}e_{it}^{\mathrm{raw}}$,
-preserving rank and interval ordering. Non-EID features use
-expanding-window min-max normalization in training and 252-day rolling
-windows in deployment.
+preserving rank and interval ordering. During deployment (2022--2024),
+values exceeding the training maximum are clipped:
+$\tilde{e}_{it}=\min(e_{it}^{\mathrm{raw}}/\max_{\mathrm{train}},\,1)$.
+In our data the deployment maximum (45.0 in 2024, Table~\ref{tab:eid_descriptives})
+exceeds the training maximum; fewer than 3\% of out-of-sample firm-year
+observations are affected. Results are robust to an expanding-window
+maximum normalization (available in the online supplement). Non-EID
+features use expanding-window min-max normalization in training and
+252-day rolling windows in deployment.
 
 \subsubsection{Reward Function}
 
@@ -693,14 +756,24 @@ Size or Leverage data.
 
 \subsubsection{Mediation Decomposition}
 
-Following Baron--Kenny, we test whether reward variance mediates the
-EID-stability association:
+Following the product-of-coefficients approach with bootstrap confidence
+intervals \citep{preacher2008}, we test whether reward variance mediates
+the EID-stability association:
 \begin{align}
   \mathrm{SD}(r_t)_{k} &= \beta_0 + \beta_1\overline{\mathrm{EID}}_k
     + \beta_2\mathrm{Regime}_k + u_k, \label{eq:step1}\\
   D_{\mathrm{norm},k} &= \delta_0
     + \delta_1\widehat{\mathrm{SD}(r_t)}_k + v_k. \label{eq:step2}
 \end{align}
+Here $\Delta\bar{D}\equiv\bar{D}_A-\bar{D}_C=0.487-0.245=0.242$ is the
+total stability improvement (positive values indicate Model C is more
+stable than Model A). The indirect effect is
+$|\hat{\beta}_1|\times\hat{\delta}_1$; absolute values are used because
+the mechanism operates via the chain
+EID$\uparrow\to\mathrm{SD}\downarrow\to D_{\mathrm{norm}}\downarrow$
+(each step negative, their product $(-)\times(-)$ yields a positive
+reduction in $D_{\mathrm{norm}}$, consistent with the positive $\Delta\bar{D}$
+convention used throughout).
 
 \begin{table}[H]
 \centering
@@ -871,8 +944,10 @@ from Table~\ref{tab:net_performance}; no path interpolation or
 reconstruction is involved. Model C achieves the highest Sharpe (0.58)
 vs.\ 0.28 for Markowitz MVP. Model D's Sharpe (0.51) exceeds Model A's
 (0.47), confirming the performance contribution of regime weighting alone.
-Cumulative monthly net return time series are available in the online
-supplement.}
+Model B's Sharpe (0.53) falls between Model A (0.47) and Model C (0.58)
+and is omitted from this chart for brevity; complete values in
+Table~\ref{tab:net_performance}. Cumulative monthly net return time
+series are available in the online supplement.}
 \label{fig:cum_returns}
 \end{figure}
 
@@ -1118,6 +1193,11 @@ P{\'a}stor, L., Stambaugh, R.~F., \& Taylor, L.~A. (2021).
 Sustainable investing in equilibrium. \textit{Journal of Financial
 Economics}, 142(2), 550--571.
 
+\bibitem[Preacher and Hayes(2008)]{preacher2008}
+Preacher, K.~J., \& Hayes, A.~F. (2008). Asymptotic and resampling
+strategies for assessing and comparing indirect effects in multiple
+mediator models. \textit{Behavior Research Methods}, 40(3), 879--891.
+
 \bibitem[Pedersen, Fitzgibbons, and Pomorski(2021)]{pedersen2021}
 Pedersen, L.~H., Fitzgibbons, S., \& Pomorski, L. (2021). Responsible
 investing: The ESG-efficient frontier. \textit{Journal of Financial
@@ -1147,65 +1227,5 @@ learning for trading. \textit{Journal of Financial Data Science},
 2(2), 25--40.
 
 \end{thebibliography}
-
-%% =============================================================
-%% Figure 1: Policy-risk filtering mechanism
-%% =============================================================
-\onecolumn
-\begin{figure*}[p]
-\centering
-\begin{tikzpicture}[
-  node distance=0.9cm and 1.5cm,
-  box/.style={rectangle, rounded corners=3pt, draw=black!70,
-    fill=black!4, align=center, minimum height=0.75cm, text width=2.5cm,
-    font=\small},
-  mbox/.style={rectangle, rounded corners=3pt, draw=blue!60!black,
-    fill=blue!8, align=center, minimum height=0.75cm, text width=2.5cm,
-    font=\small},
-  rbox/.style={rectangle, rounded corners=3pt, draw=green!50!black,
-    fill=green!8, align=center, minimum height=0.75cm, text width=2.6cm,
-    font=\small},
-  arrow/.style={-{Latex[length=2.5mm]}, thick, draw=black!70}
-]
-\node[box] (eid)   {Public EID\\Disclosure};
-\node[mbox, right=of eid]  (info)   {Lower\\Info Asymmetry};
-\node[mbox, right=of info] (shock)  {Lower Policy-\\Shock Ambiguity};
-\node[mbox, right=of shock](lpm)    {Lower Left-Tail\\Reward Noise};
-\node[mbox, right=of lpm]  (grad)   {Lower Gradient\\Variance};
-\node[rbox, right=of grad] (frob)   {Lower Frobenius\\Distance};
-
-\draw[arrow] (eid) -- (info);
-\draw[arrow] (info) -- (shock);
-\draw[arrow] (shock) -- (lpm);
-\draw[arrow] (lpm) -- (grad);
-\draw[arrow] (grad) -- (frob);
-
-%% Empirical tests
-\node[box, below=0.9cm of info,  text width=2.8cm, font=\scriptsize,
-  draw=gray!60, fill=gray!5]
-  (t1) {Test: Table~\ref{tab:alpha_test}\\$\hat{a}_1=-0.024^{**}$};
-\node[box, below=0.9cm of lpm,   text width=2.8cm, font=\scriptsize,
-  draw=gray!60, fill=gray!5]
-  (t2) {Mediation Step 1\\$\hat\beta_1=-0.214^{***}$};
-\node[box, below=0.9cm of grad,  text width=2.8cm, font=\scriptsize,
-  draw=gray!60, fill=gray!5]
-  (t3) {Mediation Step 2\\$\hat\delta_1=+0.318^{***}$};
-\node[box, below=0.9cm of frob,  text width=2.8cm, font=\scriptsize,
-  draw=gray!60, fill=gray!5]
-  (t4) {Primary Result\\$\Delta\bar{D}=-36\%$, $p<.001$};
-
-\draw[arrow, gray!60, dashed] (info) -- (t1);
-\draw[arrow, gray!60, dashed] (lpm)  -- (t2);
-\draw[arrow, gray!60, dashed] (grad) -- (t3);
-\draw[arrow, gray!60, dashed] (frob) -- (t4);
-\end{tikzpicture}
-\caption{Policy-Risk Filtering Mechanism: EID to Parameter Stability.
-Top row shows the hypothesized causal chain (Equation~\ref{eq:chain}).
-Bottom row shows the empirical tests in this paper at each step.
-The chain is a \emph{Motivating Assumption}, not a proved causal
-claim; each empirical box reports the associational evidence
-consistent with that link.}
-\label{fig:mechanism}
-\end{figure*}
 
 \end{document}
