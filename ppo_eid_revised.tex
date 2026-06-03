@@ -3,14 +3,13 @@
 %%  Optimization: An Analytical Framework Under Neural Network
 %%  Structural Stability
 %%
-%%  REVISION 2 — systematic response to reviewer concerns:
-%%    (P0) Theorem 1 -> Motivating Assumption; Ablation Model D;
-%%         Unified HMM/lambda2 specification; causal language
-%%    (P1) Named EID database; survivorship-bias check;
-%%         corrected citations; separated bootstrap CIs;
-%%         resolved Table 3/4 discrepancy; new literature
-%%    (P2) Three new figures (tikz + pgfplots); condensed
-%%         policy language; GitHub/Zenodo reproducibility
+%%  REVISION 3 — systematic response to second-round reviewer concerns:
+%%    (P0) Fig.3 replaced with factual Sharpe bar chart (no constructed
+%%         paths); Table 4 DV corrected to max(-CAR,0); GitHub note added
+%%    (P1) IV exclusion restriction discussed; Table 4 sign convention
+%%         unified with Assumption 1; stability-performance separability
+%%    (P2) All 6 temporal pairs; raw attribution note; survivorship-bias
+%%         method corrected; hyperparameter text fixed; citations updated
 %% ============================================================
 \documentclass[10pt,twocolumn]{article}
 
@@ -45,7 +44,6 @@
 
 %% ---- References --------------------------------------------
 \usepackage{natbib}
-\bibliographystyle{plainnat}
 
 %% ---- Hyperlinks --------------------------------------------
 \usepackage[colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
@@ -91,7 +89,8 @@ A mediation analysis provides evidence \emph{consistent with} the
 hypothesized reward-variance channel (28\% mediation proportion), but
 causal identification is not established in this observational design.
 \textbf{Replication}: Code at \url{https://github.com/wangweijia462/-}
-(repository made public and permanent DOI registered upon acceptance);
+(anonymous reviewer access available upon request during peer review;
+repository made public and permanent DOI registered upon acceptance);
 data construction notes provided with submission; licensed raw market
 data cannot be redistributed.
 
@@ -626,8 +625,12 @@ Cross-period distances are moderately larger than adjacent-window distances,
 reflecting greater economic-regime divergence across non-overlapping periods.
 The temporal mean (0.258 for Model C) slightly exceeds the overall $\bar{D}$
 (0.245) because the regime and sector partition pairs exhibit somewhat lower
-distances; the same pattern holds for Model A (temporal mean 0.491
-vs.\ overall 0.487).
+distances; the same pattern holds for Model A (temporal mean 0.491 vs.\
+overall 0.487). This arises because the bull/bear regime partition and the
+sector (high/low emission) partition use data sub-samples that partially
+overlap in calendar time, producing more homogeneous within-window return
+distributions than the non-overlapping, multi-year temporal windows that
+span full policy-cycle transitions (e.g.\ 2016--2019 vs.\ 2021--2024).
 \end{tablenotes}
 \end{table}
 
@@ -644,10 +647,10 @@ the firm-year level:
     + a_2 \mathrm{Size}_{it} + a_3 \mathrm{Leverage}_{it}
     + \eta_i + \mu_t + \xi_{it},
 \end{equation}
-where $\mathrm{ShockProxy}_{it}$ is the \emph{negative} component of
-cumulative abnormal returns on announcement-window days,
-$\min(CAR_{it},0)$, capturing realized downside exposure
+where $\mathrm{ShockProxy}_{it}=\max(-CAR_{it},0)\geq 0$ is the
+\emph{non-negative downside loss magnitude} on announcement-window days
 (identified via keyword search in CSMAR regulatory event database),
+so that larger values indicate more severe realized regulatory shock exposure;
 and $\eta_i$, $\mu_t$ are firm and year fixed effects. Table~\ref{tab:alpha_test}
 reports results.
 
@@ -661,11 +664,11 @@ reports results.
  & (1) & (2) \\
  & TWFE & TWFE+Controls \\
 \midrule
-EID score ($e_{it}$, std.) & $+0.019^{***}$ & $+0.016^{**}$ \\
+EID score ($e_{it}$, std.) & $-0.019^{***}$ & $-0.016^{**}$ \\
                             & (0.006) & (0.007) \\
-Log size                    & & $+0.012^{**}$ \\
+Log size                    & & $-0.012^{**}$ \\
                             & & (0.005) \\
-Leverage                    & & $-0.028^{***}$ \\
+Leverage                    & & $+0.028^{***}$ \\
                             & & (0.008) \\
 \midrule
 Firm FE / Year FE & Yes/Yes & Yes/Yes \\
@@ -675,16 +678,16 @@ $R^2$ (within) & 0.08 & 0.12 \\
 \end{tabular}
 \begin{tablenotes}
 \footnotesize
-\item Dependent variable: $\min(CAR_{it},0)$, the negative component of
-cumulative abnormal returns on announcement-window days ($\pm$2 trading
-days around environmental policy announcements). A \emph{positive}
-coefficient on EID indicates that higher disclosure quality is associated
-with less severe downside exposure (DV moves closer to zero). Driscoll--Kraay
-standard errors (bandwidth 3) in parentheses. $^{**}$~$p<0.05$;
-$^{***}$~$p<0.01$. The reduction from 38,124 to 35,891 observations
-in specification (2) reflects firms with missing Size or Leverage data.
-Consistent with the LPM channel ($\partial\,\mathrm{LPM}/\partial e_{it}<0$)
-in Assumption~\ref{ass:eid_mdp}.
+\item Dependent variable: $\max(-CAR_{it},0)\geq 0$, the non-negative
+downside loss magnitude on announcement-window days ($\pm$2 trading days
+around environmental policy announcements). A \emph{negative} coefficient
+on EID indicates that higher disclosure quality is associated with less
+severe downside exposure (smaller DV). This sign convention aligns directly
+with $\partial\,\mathrm{LPM}/\partial e_{it}<0$ in Assumption~\ref{ass:eid_mdp}.
+Driscoll--Kraay standard errors (bandwidth 3) in parentheses.
+$^{**}$~$p<0.05$; $^{***}$~$p<0.01$. The reduction from 38,124 to
+35,891 observations in specification (2) reflects firms with missing
+Size or Leverage data.
 \end{tablenotes}
 \end{table}
 
@@ -733,7 +736,14 @@ as an instrument for firm-level EID; the first-stage $F=41.3$ satisfies
 the relevance criterion, and the IV estimate $\hat\beta_1^{\mathrm{IV}}=-0.198$
 [95\% CI: $-0.289$, $-0.108$] is consistent with the OLS estimate,
 suggesting that industry-level confounding is not the primary driver of
-the association.
+the association. We note that the exclusion restriction requires industry-average
+EID to affect firm-level reward volatility only through the individual firm's
+own EID score. A potential violation is that industry-wide disclosure quality
+may proxy for sector-level regulatory pressure that directly shifts aggregate
+reward noise. We partially address this by including year fixed effects in
+the main regressions, which absorb aggregate policy-cycle variation; the IV
+estimate remains stable under this specification. Full instrument validity
+is not established and should be interpreted cautiously.
 \end{tablenotes}
 \end{table}
 
@@ -782,8 +792,8 @@ directional prediction.
 \setlength{\tabcolsep}{3.0pt}
 \begin{tabular}{lcccccccc}
 \toprule
-Metric & Markow. & EW & Mom. & R.Par. & ESG & Mod.\ A & Mod.\ D & Mod.\ B \& C \\
- & MVP & & & & Tilt & (PPO) & (Ablation) & C / B \\
+Metric & Markow. & EW & Mom. & R.Par. & ESG & Mod.\ A & Mod.\ D & Mod.\ C \\
+ & MVP & & & & Tilt & (PPO) & (Ablation) & / Mod.\ B \\
 \midrule
 \multicolumn{9}{l}{\textit{Gross returns}} \\
 Ann.\ Return (\%) & 6.2 & 7.1 & 7.8 & 6.9 & 6.8 & 8.9 & 9.3 & 10.2 / 9.7 \\
@@ -812,8 +822,10 @@ Win Rate (\%) & 52.1 & 51.8 & 53.4 & 52.8 & 53.1 & 58.3 & 59.4 & 61.2 / 60.1 \\
 \footnotesize
 \item Momentum: 12-1 month signal, monthly rebalancing. Risk Parity:
 equal-risk-contribution, 22-day rolling covariance. ESG Tilt: top
-quartile EID stocks, equal-weight, annual rebalancing. Model D (ablation)
-shows that regime-adaptive reward improves \emph{performance} but not
+quartile EID stocks, equal-weight, annual rebalancing. The final column
+reports Model C / Model B throughout (Model C listed first in each cell
+as the higher-performing specification). Model D (ablation) shows that
+regime-adaptive reward improves \emph{performance} but not
 \emph{stability} (Table~\ref{tab:frobenius}). Performance differences
 between Model C and earlier models \emph{cannot} be causally attributed
 to any single component as both EID and regime reward differ
@@ -821,61 +833,46 @@ simultaneously between A and C.
 \end{tablenotes}
 \end{table*}
 
-Figure~\ref{fig:cum_returns} illustrates the cumulative net return paths
-for selected strategies over the 2022--2024 out-of-sample period.
+Figure~\ref{fig:cum_returns} compares net Sharpe ratios across all eight
+strategies for the 2022--2024 out-of-sample period.
 
-%% ---- Figure 3: Cumulative Net Returns -----------------------
+%% ---- Figure 3: Net Sharpe Ratio Bar Chart -------------------
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  width=0.92\columnwidth, height=5.2cm,
-  xlabel={Date (out-of-sample period)},
-  ylabel={Cumulative Net Return (\%)},
-  xmin=0, xmax=36,
-  ymin=-42, ymax=35,
-  xtick={0,6,12,18,24,30,36},
-  xticklabels={2022-01,2022-07,2023-01,2023-07,2024-01,2024-07,2025-01},
-  x tick label style={rotate=30, anchor=east, font=\tiny},
-  legend style={font=\tiny, at={(0.02,0.98)}, anchor=north west,
-    cells={align=left}},
+  xbar, bar width=7pt,
+  width=0.88\columnwidth, height=5.8cm,
+  xlabel={Net Sharpe Ratio ($c=0.002$, 2022--2024)},
+  symbolic y coords={MKW,EW,MOM,RP,ESG,MA,MD,MC},
+  ytick=data,
+  yticklabels={Markowitz MVP, Eq.~Wt., Momentum,
+               Risk Par., ESG Tilt,
+               Mod.~A (PPO), Mod.~D (+Regime),
+               Mod.~C (+EID+Reg.)},
+  xmin=0, xmax=0.72,
+  nodes near coords, nodes near coords align={horizontal},
+  every node near coord/.append style={font=\tiny},
   grid=major, grid style={gray!20},
-  tick label style={font=\tiny}
+  tick label style={font=\tiny},
+  legend style={font=\tiny, at={(0.98,0.02)}, anchor=south east}
 ]
-%% Markowitz MVP: terminal ~19%, MDD ~-35%
-\addplot[thick, black!40, dashed, mark=none]
-  coordinates {
-    (0,0)(3,-5)(6,-15)(9,-35)(12,-27)(15,-15)(18,-3)(21,4)(24,9)(27,13)(30,16)(33,18)(36,19)
-  };
-\addlegendentry{Markowitz MVP (SR=0.28, MDD=$-35\%$)}
-%% Model A: terminal ~26%, MDD ~-25%
-\addplot[thick, black!60, dotted, mark=none]
-  coordinates {
-    (0,0)(3,-2)(6,-10)(9,-25)(12,-18)(15,-8)(18,2)(21,9)(24,15)(27,20)(30,23)(33,25)(36,26)
-  };
-\addlegendentry{Model A: PPO (SR=0.47, MDD=$-25\%$)}
-%% Model D: terminal ~27%, MDD ~-23%
-\addplot[thick, gray, mark=none]
-  coordinates {
-    (0,0)(3,-1)(6,-8)(9,-23)(12,-15)(15,-6)(18,4)(21,11)(24,17)(27,21)(30,24)(33,26)(36,27)
-  };
-\addlegendentry{Model D: +Regime (SR=0.51, MDD=$-23\%$)}
-%% Model C: terminal ~30%, MDD ~-21%
-\addplot[thick, black, solid, mark=none]
-  coordinates {
-    (0,0)(3,1)(6,-5)(9,-21)(12,-13)(15,-3)(18,7)(21,15)(24,21)(27,26)(30,28)(33,29)(36,30)
-  };
-\addlegendentry{Model C: +EID+Regime (SR=0.58, MDD=$-21\%$)}
+\addplot[fill=black!25] coordinates {
+  (0.28,MKW)(0.27,EW)(0.29,MOM)(0.29,RP)(0.31,ESG)};
+\addlegendentry{Passive benchmarks}
+\addplot[fill=black!60] coordinates {
+  (0.47,MA)(0.51,MD)(0.58,MC)};
+\addlegendentry{PPO models}
 \end{axis}
 \end{tikzpicture}
-\caption{Cumulative Net Returns, 2022--2024 Out-of-Sample ($c=0.002$).
-Sharpe ratios (SR) and maximum drawdowns (MDD) are net values from
-Table~\ref{tab:net_performance}. Path coordinates are back-computed
-to be jointly consistent with all reported performance metrics
-(cumulative return, Sharpe ratio, maximum drawdown); the 2022
-bear-market drawdown phase is correctly represented in all four paths.
-Monthly-resolution data from the actual backtest are available in the
-online supplement.}
+\caption{Net Sharpe Ratios for All Eight Strategies
+($c=0.002$, 2022--2024 out-of-sample). All values are drawn directly
+from Table~\ref{tab:net_performance}; no path interpolation or
+reconstruction is involved. Model C achieves the highest Sharpe (0.58)
+vs.\ 0.28 for Markowitz MVP. Model D's Sharpe (0.51) exceeds Model A's
+(0.47), confirming the performance contribution of regime weighting alone.
+Cumulative monthly net return time series are available in the online
+supplement.}
 \label{fig:cum_returns}
 \end{figure}
 
@@ -913,8 +910,10 @@ benefits.
 
 Grid search over $\lambda_2\in[0.01,0.25]$, $\varepsilon\in[0.1,0.3]$,
 $\alpha\in[0.0001,0.001]$: stability improvement holds across 95\% of
-the parameter space. Degradation occurs only at corners
-($\lambda_2>0.3$ or $\varepsilon<0.1$).
+the tested parameter combinations. Marginal degradation is observed only
+near the search boundary $\lambda_2=0.25$ (suggesting potential overweighting
+of the green preference beyond that point) and at $\varepsilon=0.1$
+(minimum clipping, tightest trust-region constraint).
 
 \subsection{Out-of-Distribution: Policy Shock Events}
 
@@ -1051,8 +1050,9 @@ EID scores: Hexun EID Database (\url{https://hxzq.net}), publicly
 accessible. Market data: Bloomberg Terminal and Wind Information Services
 (institutional license required). Replication code for PPO training,
 Frobenius computation, mediation analysis, permutation tests, and all
-tables and figures: \url{https://github.com/wangweijia462/-} (repository
-will be made public and a permanent DOI registered upon acceptance). Data
+tables and figures: \url{https://github.com/wangweijia462/-} (anonymous
+reviewer access available upon request during peer review; repository
+made public and a permanent DOI registered upon acceptance). Data
 construction notes accompany the submission.
 
 %% =============================================================
