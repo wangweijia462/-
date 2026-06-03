@@ -1,0 +1,108 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{parskip}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{10pt}
+
+\begin{document}
+
+\begin{flushright}
+Wang Weijia\\
+School of Economics and Finance\\
+Xi'an Jiaotong University\\
+Xi'an 710049, China\\
+\texttt{18522704823@163.com}\\[6pt]
+June 2026
+\end{flushright}
+
+\bigskip
+
+The Editor-in-Chief\\
+\textit{Journal of Data Science and Analytics}
+
+\bigskip
+
+Dear Editor,
+
+We submit for your consideration the manuscript entitled
+\textbf{``Dynamic Green Portfolio Optimization Using Proximal Policy
+Optimization: An Analytical Framework Under Neural Network Structural
+Stability.''} This paper has not been published previously, is not
+under review elsewhere, and all authors have approved the submission.
+
+\textbf{Motivation and research question.}
+Deep reinforcement learning has become an active approach to dynamic
+portfolio optimization, yet existing implementations restrict state
+spaces to market microstructure variables and ignore firm-level
+regulatory signals. China's Environmental Information Disclosure (EID)
+system now scores more than 1,789 listed companies annually on a 0--100
+scale; regulators levied penalties against over 11,000 A-share firms
+between 2015 and 2024, making this dataset a plausible source of
+policy-risk information for portfolio models. We ask whether embedding
+EID scores directly into a Proximal Policy Optimization (PPO) state
+space improves the structural stability of the learned policy, as
+measured by the normalized Frobenius distance between networks trained
+independently on non-overlapping data partitions.
+
+\textbf{Key findings.}
+Using 59,051 firm-year EID observations from 2008 to 2025, with
+out-of-sample portfolio evaluation over 2022--2024, we find that adding
+EID to the PPO state space reduces mean Frobenius distance by 36\%
+(95\% CI: 27--46\%, $p<0.001$, Cohen's $d=1.84$). A model that
+combines EID with regime-adaptive reward weighting achieves a 50\%
+reduction ($d=2.01$). Critically, an ablation model that adds only
+regime weighting while withholding EID produces a statistically
+insignificant 3.3\% reduction ($p=0.193$), isolating the stability
+gain to EID's informational content. A permutation test that shuffles
+EID labels within years confirms that the effect requires the genuine
+firm-level ordering in disclosure scores. On a net-return basis at a
+proportional cost of 0.2\% per turnover unit, the full model achieves a
+Sharpe ratio of 0.58 versus 0.29 for Markowitz minimum-variance
+portfolio and 0.31 for a static ESG tilt targeting the same securities.
+A mediation analysis attributes 28\% of the stability improvement to
+the reward-variance channel, consistent with the information-asymmetry
+mechanism proposed in the theoretical framework.
+
+\textbf{Contribution and fit with the journal.}
+The paper makes three contributions of direct interest to readers of
+\textit{JDSA}. First, it introduces normalized Frobenius distance as a
+data-driven diagnostic for state-variable quality in reinforcement
+learning models, providing a principled criterion for deciding which
+information sources merit inclusion in the state space. Second, the
+controlled four-model ablation design offers a replicable template for
+decomposing contributions of individual signal components in DRL
+portfolio research. Third, the paper bridges the environmental
+disclosure literature and the machine learning literature by showing
+that a governance signal widely studied in accounting and finance
+research directly improves optimization algorithm behavior. All code,
+hyperparameters, and data construction notes accompany the submission;
+replication is fully documented at the linked repository.
+
+\textbf{Limitations acknowledged.}
+The paper is transparent about its limitations. The full causal chain
+from EID to parameter stability is not established under the
+observational design; we explicitly identify the quasi-experimental
+variation, specifically staggered mandatory disclosure adoption, that
+would be needed for causal identification. Results are currently
+calibrated to Chinese A-shares, and cross-market generalizability
+remains an open question.
+
+We believe this manuscript makes a timely and well-evidenced
+contribution that is well-suited to the scope of
+\textit{JDSA}. We would be grateful for the opportunity to revise the
+paper in light of reviewer comments.
+
+\bigskip
+
+Yours sincerely,
+
+\vspace{1.5cm}
+
+Wang Weijia\\
+School of Economics and Finance, Xi'an Jiaotong University\\
+\texttt{18522704823@163.com}
+
+\end{document}
