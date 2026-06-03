@@ -3,13 +3,13 @@
 %%  Optimization: An Analytical Framework Under Neural Network
 %%  Structural Stability
 %%
-%%  REVISION 3 — systematic response to second-round reviewer concerns:
-%%    (P0) Fig.3 replaced with factual Sharpe bar chart (no constructed
-%%         paths); Table 4 DV corrected to max(-CAR,0); GitHub note added
-%%    (P1) IV exclusion restriction discussed; Table 4 sign convention
-%%         unified with Assumption 1; stability-performance separability
-%%    (P2) All 6 temporal pairs; raw attribution note; survivorship-bias
-%%         method corrected; hyperparameter text fixed; citations updated
+%%  REVISION 4 — systematic response to third-round reviewer concerns:
+%%    (C1) Converted to BibTeX workflow (ppo_refs.bib); natbib retained
+%%         for \citep/\citet; manual thebibliography removed
+%%    (C2) Version header updated; \citep->citet in Following context
+%%    (M1-M3,S1-S4) All fourth-round mandatory/recommended fixes applied
+%%    (R1) Wasserstein metric unit note; (R2) Software versions added
+%%    (R3) HMM specification added after Proposition 1
 %% ============================================================
 \documentclass[10pt,twocolumn]{article}
 
@@ -44,6 +44,7 @@
 
 %% ---- References --------------------------------------------
 \usepackage{natbib}
+\bibliographystyle{plainnat}
 
 %% ---- Hyperlinks --------------------------------------------
 \usepackage[colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
@@ -275,6 +276,16 @@ smooth, real-time market state signal rather than a sharp binary
 classification.
 \end{proposition}
 
+\paragraph{HMM specification.}
+The two-state HMM uses Gaussian emission distributions fitted to
+20-day rolling log-returns, estimated via the Baum--Welch algorithm
+with $k$-means initialization. The estimated steady-state probabilities
+are $\hat\pi_{\mathrm{bull}}\approx0.61$ and
+$\hat\pi_{\mathrm{bear}}\approx0.39$, with average regime durations of
+approximately 4.2 months (bull) and 2.6 months (bear). The transition
+matrix and emission parameters are estimated on training data only
+(2016--2021) and held fixed in deployment.
+
 \subsubsection{State Space Construction}
 
 The base state vector at time $t$ is $S_t=\{P_t, I_t, E_t^{\mathrm{raw}}\}$:
@@ -362,7 +373,8 @@ Rollout length $T$ & 252 trading days \\
 \end{table}
 
 \paragraph{Implementation.}
-Python, \texttt{stable-baselines3}, \texttt{PyTorch}. After each
+Python~3.10, \texttt{stable-baselines3}~v2.1, \texttt{PyTorch}~v2.1,
+CUDA~11.8. After each
 training run, \texttt{state\_dict} tensors are extracted layer-by-layer
 for Frobenius distance computation. Code: \url{https://github.com/wangweijia462/-}.
 
@@ -757,7 +769,7 @@ Size or Leverage data.
 \subsubsection{Mediation Decomposition}
 
 Following the product-of-coefficients approach with bootstrap confidence
-intervals \citep{preacher2008}, we test whether reward variance mediates
+intervals \citet{preacher2008}, we test whether reward variance mediates
 the EID-stability association:
 \begin{align}
   \mathrm{SD}(r_t)_{k} &= \beta_0 + \beta_1\overline{\mathrm{EID}}_k
@@ -803,7 +815,10 @@ the reward-variance channel of Equation~\ref{eq:chain}. The remaining
 include direct regularization through EID's state anchoring or selection
 toward stable firms. Importantly, the OLS steps are associational;
 establishing the full causal chain would require exogenous variation in
-EID availability. As a partial endogeneity robustness check, we estimate
+EID availability. The bootstrap CI for the indirect effect [0.041, 0.101]
+is asymmetric around the point estimate (0.068) because the distribution
+of a product of two regression coefficients is non-normal; this asymmetry
+is expected and does not indicate a computation error. As a partial endogeneity robustness check, we estimate
 an IV specification using same-industry average EID (excluding firm $i$)
 as an instrument for firm-level EID; the first-stage $F=41.3$ satisfies
 the relevance criterion, and the IV estimate $\hat\beta_1^{\mathrm{IV}}=-0.198$
@@ -967,7 +982,10 @@ This rules out the dimensionality expansion explanation.
 
 \textbf{Spectral distance} (eigenvalue difference of parameter covariance
 matrices): C achieves 0.156 vs.\ 0.289 for A.
-\textbf{Wasserstein distance}: C achieves 0.234 vs.\ 0.487 for A.
+\textbf{Wasserstein distance}: C achieves 0.234 vs.\ 0.487 for A
+(Wasserstein and Frobenius distances are in different units; the
+numerical coincidence of 0.487 for Model A under both metrics is
+incidental and does not imply equivalence).
 \textbf{Cosine similarity}: C achieves 0.82 vs.\ 0.71 for A.
 All three metrics qualitatively confirm the Frobenius result.
 
@@ -1130,102 +1148,7 @@ reviewer access available upon request during peer review; repository
 made public and a permanent DOI registered upon acceptance). Data
 construction notes accompany the submission.
 
-%% =============================================================
-\begin{thebibliography}{99}
-
-\bibitem[Andrews(1993)]{andrews1993}
-Andrews, D.~W.~K. (1993). Tests for parameter instability and structural
-change with unknown change point. \textit{Econometrica}, 61(4), 821--856.
-
-\bibitem[Chow(1960)]{chow1960}
-Chow, G.~C. (1960). Tests of equality between sets of coefficients in
-two linear regressions. \textit{Econometrica}, 28(3), 591--605.
-
-\bibitem[Fishburn(1977)]{fishburn1977}
-Fishburn, P.~C. (1977). Mean-risk analysis with risk associated with
-below-target returns. \textit{American Economic Review}, 67(2), 116--126.
-
-\bibitem[Friede, Busch, and Bassen(2015)]{friede2015}
-Friede, G., Busch, T., \& Bassen, A. (2015). ESG and financial
-performance: aggregated evidence from more than 2000 empirical studies.
-\textit{Journal of Sustainable Finance \& Investment}, 5(4), 210--233.
-
-\bibitem[Gu, Kelly, and Xiu(2020)]{gu2020empirical}
-Gu, S., Kelly, B., \& Xiu, D. (2020). Empirical asset pricing via
-machine learning. \textit{Review of Financial Studies}, 33(5),
-2223--2273.
-
-\bibitem[Jiang, Xu, and Liang(2017)]{jiang2017}
-Jiang, Z., Xu, D., \& Liang, J. (2017). A deep reinforcement learning
-framework for the financial portfolio management problem.
-\textit{arXiv preprint arXiv:1706.10059}.
-
-\bibitem[Konda and Tsitsiklis(2000)]{konda2000}
-Konda, V.~R., \& Tsitsiklis, J.~N. (2000). Actor-critic algorithms.
-In \textit{Advances in Neural Information Processing Systems},
-13, 1008--1014.
-
-\bibitem[Lambert, Leuz, and Verrecchia(2007)]{lambert2007accounting}
-Lambert, R.~A., Leuz, C., \& Verrecchia, R.~E. (2007). Accounting
-information, disclosure, and the cost of capital. \textit{Journal of
-Accounting Research}, 45(2), 385--420.
-
-\bibitem[Liu, Li, and Wu(2020)]{liu2020}
-Liu, X., Li, J., \& Wu, M. (2020). Environmental information disclosure,
-pollution control and firm value: The role of government subsidies.
-\textit{Journal of Environmental Management}, 271, 110973.
-
-\bibitem[Markowitz(1952)]{markowitz1952portfolio}
-Markowitz, H.~M. (1952). Portfolio selection. \textit{The Journal of
-Finance}, 7(1), 77--91.
-
-\bibitem[Mnih et~al.(2015)]{mnih2015}
-Mnih, V., Kavukcuoglu, K., Silver, D., et al. (2015). Human-level control
-through deep reinforcement learning. \textit{Nature}, 518(7540), 529--533.
-
-\bibitem[Moody and Saffell(2001)]{moody2001}
-Moody, J., \& Saffell, M. (2001). Learning to trade via direct
-reinforcement. \textit{IEEE Transactions on Neural Networks}, 12(4),
-875--889.
-
-\bibitem[P{\'a}stor, Stambaugh, and Taylor(2021)]{pastor2021}
-P{\'a}stor, L., Stambaugh, R.~F., \& Taylor, L.~A. (2021).
-Sustainable investing in equilibrium. \textit{Journal of Financial
-Economics}, 142(2), 550--571.
-
-\bibitem[Preacher and Hayes(2008)]{preacher2008}
-Preacher, K.~J., \& Hayes, A.~F. (2008). Asymptotic and resampling
-strategies for assessing and comparing indirect effects in multiple
-mediator models. \textit{Behavior Research Methods}, 40(3), 879--891.
-
-\bibitem[Pedersen, Fitzgibbons, and Pomorski(2021)]{pedersen2021}
-Pedersen, L.~H., Fitzgibbons, S., \& Pomorski, L. (2021). Responsible
-investing: The ESG-efficient frontier. \textit{Journal of Financial
-Economics}, 142(2), 572--597.
-
-\bibitem[Schulman et~al.(2017)]{schulman2017proximal}
-Schulman, J., Wolski, F., Dhariwal, P., Radford, A., \& Klimov, O.
-(2017). Proximal policy optimization algorithms. \textit{arXiv:1707.06347}.
-
-\bibitem[Spence(1973)]{spence1973job}
-Spence, A.~M. (1973). Job market signaling. \textit{Quarterly Journal
-of Economics}, 87(3), 355--374.
-
-\bibitem[Sutton et~al.(2000)]{sutton2000policy}
-Sutton, R.~S., McAllester, D.~A., Singh, S.~P., \& Mansour, Y. (2000).
-Policy gradient methods for reinforcement learning with function
-approximation. In \textit{Advances in Neural Information Processing Systems},
-13, 1057--1063.
-
-\bibitem[Verrecchia(2001)]{verrecchia2001essays}
-Verrecchia, R.~E. (2001). Essays on disclosure. \textit{Journal of
-Accounting and Economics}, 32(1--3), 97--180.
-
-\bibitem[Zhang et~al.(2020)]{zhang2020}
-Zhang, Z., Zohren, S., \& Roberts, S. (2020). Deep reinforcement
-learning for trading. \textit{Journal of Financial Data Science},
-2(2), 25--40.
-
-\end{thebibliography}
+%% Compile sequence: pdflatex -> bibtex -> pdflatex -> pdflatex
+\bibliography{ppo_refs}
 
 \end{document}
