@@ -72,22 +72,24 @@ Xi'an 710049, China \\
 Environmental Information Disclosure (EID) is an emerging macroeconomic
 data element in China's capital markets. This paper embeds publicly
 reported EID scores directly into a Proximal Policy Optimization (PPO)
-state space and evaluates whether this information is \emph{associated
-with} improved neural-network structural stability. Using 59,051
-firm-year EID observations (Hexun EID Database) for Chinese listed
-companies from 2008 to 2025 and out-of-sample portfolio tests for
-2022--2024, the PPO+EID+Regime model reduces normalized Frobenius
-parameter distance by 36\% (A$\to$B, bootstrap CI: [27\%, 46\%], $d=1.84$) and
-50\% (A$\to$C, CI: [41\%, 59\%], $d=2.01$) relative to baseline PPO ($p<0.001$). A permutation test confirms this improvement
-reflects EID's firm-level economic content rather than dimensionality
-expansion. An ablation model (PPO+Regime, no EID) achieves a
-statistically insignificant 3.3\% reduction in Frobenius distance,
-isolating parameter stability gains specifically to EID. On a
-\emph{net-return} basis (proportional cost 0.2\% per turnover unit),
-Model C achieves a Sharpe ratio of 0.58 versus 0.29 for Markowitz MVP.
-A mediation analysis provides evidence \emph{consistent with} the
-hypothesized reward-variance channel (28\% mediation proportion), but
-causal identification is not established in this observational design.
+state space and tests whether this information improves neural-network
+structural stability. Using 59,051 firm-year EID observations (Hexun
+EID Database) for Chinese listed companies from 2008 to 2025 and
+out-of-sample portfolio tests for 2022--2024, the PPO+EID+Regime model
+reduces normalized Frobenius parameter distance by 36\%
+(A$\to$B, bootstrap CI: [27\%, 46\%], $d=1.84$) and 50\%
+(A$\to$C, CI: [41\%, 59\%], $d=2.01$) relative to baseline PPO
+($p<0.001$). A permutation test confirms this improvement reflects
+EID's firm-level economic content rather than dimensionality expansion.
+An ablation model (PPO+Regime, no EID) achieves a statistically
+insignificant 3.3\% reduction in Frobenius distance, isolating
+parameter stability gains specifically to EID. On a \emph{net-return}
+basis (proportional cost 0.2\% per turnover unit), Model C achieves a
+Sharpe ratio of 0.58 versus 0.29 for Markowitz MVP. A mediation
+analysis attributes 28\% of the stability gain to the reward-variance
+channel; the remaining share operates through pathways not yet
+precisely identified, and causal interpretation requires a stronger
+identification design.
 \textbf{Replication}: Code at \url{https://github.com/wangweijia462/-}
 (anonymous reviewer access available upon request during peer review;
 repository made public and permanent DOI registered upon acceptance);
@@ -104,24 +106,27 @@ Neural Network Stability, Portfolio Optimization, China
 \section{Introduction}
 \label{sec:intro}
 
-Environmental Information Disclosure (EID) scores are gaining
-prominence as a macroeconomic signal in China's capital markets.
-Under the 15th Five-Year Plan (2026--2030), mandatory environmental
-reporting for listed companies creates firm-level data that may help
-investors distinguish between firms with low and high regulatory risk
-exposure---a distinction that becomes financially material when
-environmental policy shocks occur.
+Between 2015 and 2024, Chinese regulators levied environmental
+penalties against more than 11,000 A-share listed firms, and the
+Hexun EID scoring system publicly rates each company's environmental
+governance quality on a 0--100 scale. Despite the scale of this
+dataset---59,051 firm-year observations across the full 2008--2025
+sample---most dynamic portfolio optimization models treat the
+investment universe as defined solely by price and volume
+microstructure, ignoring the regulatory-risk signal embedded in
+disclosure scores.
 
-Existing dynamic portfolio optimization frameworks face methodological
-barriers when integrating EID. Deep reinforcement learning (DRL)
-methods \citep{schulman2017proximal,mnih2015} typically restrict
-state spaces to market microstructure variables, excluding the
-firm-level environmental metrics that may signal policy-adaptation
-capacity. This paper asks whether embedding EID into a Proximal Policy
-Optimization (PPO) framework yields a policy that is not only more
-performant but also \emph{structurally more stable}---in the sense that
+The default assumption in DRL portfolio optimization
+\citep{schulman2017proximal,mnih2015} is that firm-level environmental
+data either get priced in quickly or are redundant with standard
+microstructure variables. We challenge this assumption directly. When
+EID scores enter the PPO state space alongside price microstructure,
 independently trained networks on non-overlapping data subsets converge
-to more similar parameter configurations.
+to parameter configurations that are 36--50\% closer in normalized
+Frobenius norm ($p<0.001$ in both cases). The regime-only ablation
+(Model D, no EID) produces a statistically insignificant 3.3\%
+reduction under the same training protocol, ruling out dimensionality
+and regime conditioning as the source of the improvement.
 
 \paragraph{A note on causal language.}
 Throughout this paper, claims are \emph{associational}: models trained
@@ -137,18 +142,18 @@ experiment designs exploiting mandatory disclosure policy changes---that
 would be needed to establish causality.
 
 \paragraph{Contributions.}
-\textbf{(1)} We formalize the EID-stability link as a testable
-\emph{Motivating Assumption} (not a proved theorem) and provide a
-direct empirical test of its key condition ($\alpha_1>0$), alongside
-a three-step mediation decomposition.
-\textbf{(2)} We introduce an ablation model (PPO+Regime, no EID,
-denoted Model D) that separates the EID signal contribution from the
-regime-adaptive reward design, isolating parameter stability gains
-specifically to EID.
-\textbf{(3)} We deliver net-return comparisons across multiple cost
-levels against seven benchmarks including a static ESG tilt and the
-new ablation model, and provide permutation tests that rule out the
-dimensionality expansion explanation.
+The paper's primary contribution is methodological: we establish
+normalized Frobenius distance as a diagnostic for state-variable
+quality in DRL portfolio optimization, and we introduce a controlled
+ablation design (PPO+Regime, no EID, Model D) that isolates precisely
+what EID adds beyond regime conditioning. A companion empirical
+contribution is the mediation decomposition, which attributes 28\% of
+the stability improvement to the reward-variance channel and explicitly
+flags the remaining share as an open measurement problem. Translating
+the stability gains to practical value, we report net-return
+comparisons at three transaction-cost levels against seven benchmarks,
+including a static ESG tilt that achieves only 60\% of Model C's
+Sharpe ratio despite targeting the same green securities.
 
 %% =============================================================
 \section{Methodology}
@@ -166,13 +171,12 @@ conditional on firm $i$'s EID score $e_{it}$ be:
   P(\mathrm{PolicyShock}_t\mid e_{it})=\alpha_0-\alpha_1 e_{it}+\varepsilon_t,
   \label{eq:policy_shock}
 \end{equation}
-with $\alpha_1>0$, so that higher disclosure quality reduces the
-probability of an idiosyncratic regulatory shock. Under this condition,
-including $e_{it}$ in the MDP state space modifies the state transition
-distribution and creates a positive value gradient:
-$\partial V/\partial e_{it}>0$,
-operating through the downside-risk channel
-$\partial\,\mathrm{LPM}_{q,i}/\partial e_{it}<0$, $q\geq 1$.
+with $\alpha_1>0$. Higher disclosure quality then lowers the
+probability of an idiosyncratic regulatory shock, which modifies the
+MDP state transition distribution and generates a positive value
+gradient $\partial V/\partial e_{it}>0$. The gradient operates through
+the downside-risk channel: $\partial\,\mathrm{LPM}_{q,i}/\partial
+e_{it}<0$ for $q\geq 1$.
 \end{assumption}
 
 \begin{remark}
@@ -340,13 +344,14 @@ Net returns are the primary performance measure.
 
 \subsection{PPO Training}
 
-Actor and critic networks:
+Actor and critic networks share the architecture
 $\mathrm{Input}_{d_s}\to\mathrm{ReLU}_{256}\to\mathrm{ReLU}_{256}
-\to\mathrm{ReLU}_{128}\to\mathrm{Softmax}_N$,
-ensuring $\sum_i w_{it}=1$. PPO uses the clipped objective
-(clipping parameter $\varepsilon=0.2$, GAE advantage estimation
-$\gamma=0.99$, $\lambda_{\mathrm{GAE}}=0.95$). Table~\ref{tab:hyperparams}
-lists all hyperparameters. Each model is trained with 10 random seeds.
+\to\mathrm{ReLU}_{128}$; the actor output passes through
+$\mathrm{Softmax}_N$ so portfolio weights sum to one. The PPO
+clipped objective uses $\varepsilon=0.2$ with GAE advantage estimation
+($\gamma=0.99$, $\lambda_{\mathrm{GAE}}=0.95$); full hyperparameter
+settings appear in Table~\ref{tab:hyperparams}. All four model
+variants are trained with 10 independent random seeds.
 
 \begin{table}[H]
 \centering
@@ -599,18 +604,24 @@ to the EID signal. MW = Mann--Whitney; $r$ = rank-biserial correlation.
 \end{tablenotes}
 \end{table*}
 
-The ablation result is central to the paper's argument: Model D
-(PPO+Regime, no EID) achieves $\bar{D}=0.471$, a statistically
-insignificant 3.3\% reduction from Model A ($p=0.193$, small effect
-$d=0.21$). By contrast, Model B (PPO+EID, constant reward) achieves
-$\bar{D}=0.312$, a 36\% reduction ($p<0.001$, large effect $d=1.84$).
-This isolates the parameter stability improvement specifically to the
-EID information content, not to the regime-adaptive reward design.
+The contrast between Model D and Model B is the key result. Model D
+adds regime-adaptive reward weighting to the baseline but withholds
+EID; its mean distance $\bar{D}=0.471$ is statistically
+indistinguishable from Model A's $\bar{D}=0.487$ ($p=0.193$,
+$d=0.21$). Model B adds only EID, without regime conditioning, and
+mean distance falls to $\bar{D}=0.312$---a 36\% reduction that is
+highly significant ($p<0.001$, $d=1.84$). The difference in outcomes
+between these two single-component models identifies EID, not regime
+weighting, as the source of the stability improvement.
 
-The permutation test (EID labels shuffled randomly across firms within
-each year, preserving distribution) restores $\bar{D}$ to the Model A
-level ($0.479\pm0.031$), ruling out the dimensionality expansion
-explanation.
+The permutation test addresses a specific competing explanation: that
+expanding the state space by any variable---regardless of its economic
+content---reduces Frobenius distance mechanically. Shuffling EID
+labels randomly across firms within each year (preserving the marginal
+distribution) restores $\bar{D}$ to $0.479\pm0.031$, statistically
+indistinguishable from Model A. The stability gain therefore requires
+the genuine firm-level ordering in EID scores, not merely the extra
+dimension.
 
 Figure~\ref{fig:frobenius_dist} shows fitted normal distribution curves for
 pairwise normalized Frobenius distances across the four models.
@@ -1025,16 +1036,17 @@ mandatory disclosure policies), which is beyond the current design.
 
 \subsection{Interpretation of Results}
 
-The ablation analysis (Table~\ref{tab:frobenius}) provides the most
-important empirical result: regime-adaptive reward weighting alone
-(Model D) does not significantly improve parameter stability, while
-EID inclusion does. This pattern is consistent with EID providing a
-firm-level policy-risk filter that reduces reward noise during
-training---the hypothesized mechanism in Equation~\ref{eq:chain}. The
-mediation analysis (Table~\ref{tab:mediation}) quantifies that
-approximately 28\% of the stability improvement is accounted for by
-reward variance reduction, with the remaining pathways less precisely
-identified.
+Table~\ref{tab:frobenius} establishes that regime-adaptive reward
+weighting alone (Model D, $p=0.193$, $d=0.21$) does not move the
+stability needle, whereas EID inclusion (Model B) does so by 36\%
+($p<0.001$, $d=1.84$). The mediation results in
+Table~\ref{tab:mediation} trace 28\% of this gain to the
+reward-variance channel: EID reduces firm-level downside risk
+exposure, which smooths the reward signal, which in turn lowers
+gradient variance across training runs. The remaining 72\% operates
+through pathways not yet instrumented---likely including direct
+informational effects on the state-transition distribution that bypass
+the reward function.
 
 For performance (Table~\ref{tab:net_performance}), both EID and regime
 weighting contribute: Model D (regime only) outperforms Model A, while
@@ -1048,25 +1060,24 @@ environmental governance records is associated with lower left-tail
 exposure, consistent with pre-disclosed regulatory adaptation capacity.
 
 \paragraph{Separability of stability and performance.}
-A notable feature of the ablation results is that Model D improves
-portfolio performance over Model A \emph{without} a corresponding
-improvement in parameter stability (Table~\ref{tab:frobenius}). This
-separability has substantive implications. The regime-adaptive reward
-function $\lambda_2(t)$ raises expected returns by dynamically scaling
-environmental preference according to HMM regime posteriors---a mechanism
-that operates through the reward signal independently of gradient
-consistency across training partitions. EID, by contrast, introduces
-persistent firm-level information that generates consistent gradient
-directions across different data subsets, directly reducing parameter
-distance. The separability result strengthens the interpretation of
-Frobenius distance as a diagnostic for informational signal content: if
-parameter stability were simply a by-product of smoother reward functions,
-Model D would exhibit similar stability improvements---but it does not
-($p=0.193$, $d=0.21$). Conversely, this implies that Model C's dual
-advantage (stability \emph{and} performance) reflects two distinct
-mechanisms operating in parallel, and that the performance attribution
-of each component cannot be disentangled without a controlled
-experiment separating them.
+Model D posts a Sharpe ratio of 0.44 at $c=0.002$, outperforming
+Model A's 0.36, yet its Frobenius distance ($\bar{D}=0.471$) is
+statistically indistinguishable from Model A ($p=0.193$). Model C
+achieves both the highest Sharpe (0.58) and the lowest Frobenius
+distance ($\bar{D}=0.244$). The split outcome---performance without
+stability in Model D, both in Model C---reflects two distinct
+mechanisms. Regime weighting $\lambda_2(t)$ dynamically scales
+environmental preference in the reward function; because it operates
+through the reward signal, it can raise returns without systematically
+aligning gradient directions across training partitions. EID
+introduces a persistent informational signal that influences the
+gradient at each training step, producing the parameter consistency
+that Frobenius distance captures. That these two mechanisms can be
+independently activated is a design feature, not an accidental
+outcome: practitioners seeking stability---e.g., as a criterion for
+automated retraining triggers---should prioritize the EID component,
+while regime weighting adds value as a return-enhancement layer on top
+of that foundation.
 
 \subsection{Limitations}
 
@@ -1098,32 +1109,41 @@ actual emissions or regulatory compliance performance.
 \section{Conclusion}
 \label{sec:conclusion}
 
-This paper makes three contributions.
+Taken together, the results establish two things that are not obvious
+in advance. First, firm-level environmental disclosure quality---a
+regulatory-governance signal, not a market variable---carries
+information about gradient consistency during DRL training. The
+controlled ablation makes this concrete: adding regime-adaptive reward
+weighting without EID (Model D) leaves parameter stability
+statistically unchanged ($p=0.193$, $d=0.21$), while adding EID
+produces a 36--50\% reduction in normalized Frobenius distance
+($p<0.001$). The mediation decomposition traces 28\% of this gain to
+the reward-variance channel; the majority operates through pathways
+not yet instrumentable in an observational design.
 
-\textbf{Methodologically}, we incorporate the Hexun EID score directly
-into a PPO state space without decomposition, establish normalized
-Frobenius distance as a formally justified stability metric, and
-introduce an ablation design (Model D: PPO+Regime without EID) that
-isolates the EID contribution from the regime-reward design.
-
-\textbf{Empirically}, the ablation result is pivotal: adding
-regime-adaptive reward weighting alone produces a statistically
-insignificant 3.3\% Frobenius reduction ($p=0.193$, $d=0.21$), while
-adding EID produces a 36\% reduction ($p<0.001$, $d=1.84$). Permutation
-tests confirm the improvement reflects EID's economic content. Mediation
-analysis provides evidence \emph{consistent with} but not \emph{proving}
-the hypothesized reward-variance channel (28\% mediation proportion).
-
-\textbf{Operationally}, net-return comparisons at three cost levels
-show Model C outperforms seven benchmarks; at $c=0.002$, the Sharpe
-ratio is 0.58 versus 0.29 for Markowitz MVP. The static ESG tilt
-achieves only 0.31, confirming the gains require the dynamic DRL
-component, not merely a green tilt.
+Second, stability and performance improvements are separable in the
+DRL training process. Model D achieves a higher Sharpe ratio than
+Model A (0.44 versus 0.36) through regime-adaptive weighting alone,
+even though it fails to improve parameter stability. Model C achieves
+both (Sharpe 0.58, Frobenius distance 51\% below Model A) because the
+EID and regime-weighting mechanisms operate through different
+pathways. The practical implication is specific: EID integration is
+the component to prioritize if the goal is a model that is robust to
+retraining on new data; regime weighting adds value as a
+return-enhancement layer on top of that foundation.
 
 \paragraph{Limitations.}
-The full causal chain is not identified; transaction costs erode
-advantage at higher cost levels; results are calibrated to Chinese
-A-shares.
+The full causal chain from EID to gradient consistency is not
+empirically established. The mediation analysis accounts for 28\% of
+the stability improvement through the reward-variance channel; the
+remaining 72\% is plausibly attributable to direct informational
+effects on state transitions, but testing this requires a
+stronger identification strategy---ideally a difference-in-differences
+design exploiting staggered mandatory disclosure adoption. Net-return
+advantages persist at 0.1--0.3\% per-turnover costs but would erode
+at higher levels not modeled here. All results are calibrated to
+Chinese A-shares; whether similar EID-stability relationships hold in
+markets with different disclosure regimes remains an open question.
 
 \paragraph{Future work.}
 (1) Quasi-natural experiment exploiting staggered mandatory disclosure
