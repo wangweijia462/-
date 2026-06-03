@@ -133,7 +133,7 @@ quality disclosure lowers information asymmetry
 \citep{verrecchia2001essays,lambert2007accounting}, which reduces the
 variance of the reward signal the agent observes. Lower reward variance,
 in turn, implies more consistent gradient directions across training
-runs --- the quantity measured by normalized Frobenius distance.
+runs, which is precisely the quantity measured by normalized Frobenius distance.
 
 The default assumption in DRL portfolio optimization
 \citep{schulman2017proximal,mnih2015} is that firm-level environmental
@@ -147,33 +147,9 @@ Frobenius norm ($p<0.001$ in both cases). The regime-only ablation
 reduction under the same training protocol, ruling out dimensionality
 and regime conditioning as the source of the improvement.
 
-\paragraph{A note on causal language.}
-Throughout this paper, claims are \emph{associational}: models trained
-with EID exhibit lower normalized Frobenius distance across training
-partitions. The hypothesized causal chain --- EID reduces reward noise,
-which lowers gradient variance, which lowers Frobenius distance --- is
-theoretically motivated and empirically consistent with the data, but
-the observational design does not possess the identification conditions
-for a causal proof. We use
-``associated with'' and ``consistent with'' rather than ``causes''
-throughout, and we identify the additional evidence---quasi-natural
-experiment designs exploiting mandatory disclosure policy changes---that
-would be needed to establish causality.
+All claims in this paper are associational: models trained with EID exhibit lower normalized Frobenius distance across training partitions. The hypothesized mechanism is theoretically motivated and empirically consistent with the data, but the observational design does not support causal inference. We use the language of association throughout and identify the quasi-experimental evidence that would be needed to establish causality.
 
-\paragraph{Contributions.}
-The paper's primary contribution is methodological: we establish
-normalized Frobenius distance as a diagnostic for state-variable
-quality in DRL portfolio optimization, and we introduce a controlled
-ablation design --- Model D, which uses regime weighting but withholds
-EID --- that isolates precisely what EID adds beyond regime
-conditioning. A companion empirical
-contribution is the mediation decomposition, which attributes 28\% of
-the stability improvement to the reward-variance channel and explicitly
-flags the remaining share as an open measurement problem. Translating
-the stability gains to practical value, we report net-return
-comparisons at three transaction-cost levels against seven benchmarks,
-including a static ESG tilt that achieves only 60\% of Model C's
-Sharpe ratio despite targeting the same green securities.
+The paper makes three contributions. First, we establish normalized Frobenius distance as a diagnostic for state-variable quality in DRL portfolio optimization and introduce a controlled ablation design, specifically Model D which uses regime weighting but withholds EID, to isolate precisely what EID adds beyond regime conditioning. Second, a mediation decomposition attributes 28\% of the stability improvement to the reward-variance channel and explicitly flags the remaining share as an open measurement problem. Third, net-return comparisons at three transaction-cost levels against seven benchmarks show that the gains require the dynamic DRL component; a static ESG tilt targeting the same green securities achieves only 60\% of Model C's Sharpe ratio.
 
 %% =============================================================
 \section{Methodology}
@@ -211,7 +187,7 @@ Table~\ref{tab:alpha_test}; if shocks were predominantly positive --- subsidy an
 example --- the LPM channel would not apply.
 \end{remark}
 
-\paragraph{Hypothesized mechanism chain.}
+Equation~\ref{eq:chain} formalizes the hypothesized mechanism chain:
 \begin{equation}
 \begin{aligned}
 \text{Higher EID}
@@ -222,10 +198,7 @@ example --- the LPM channel would not apply.
 \end{aligned}
 \label{eq:chain}
 \end{equation}
-This chain has intermediate-variable predictions tested in
-Section~\ref{sec:mechanism_test}.
-Figure~\ref{fig:mechanism} visualizes each link with its corresponding
-empirical test annotation.
+Each link carries testable intermediate-variable predictions examined in Section~\ref{sec:mechanism_test}. Figure~\ref{fig:mechanism} annotates each node with the corresponding empirical test result.
 
 %% ---- Figure 1: Policy-risk filtering mechanism (inline) ----
 \begin{figure}[!t]
@@ -301,7 +274,7 @@ smooth, real-time market state signal rather than a sharp binary
 classification.
 \end{proposition}
 
-\paragraph{HMM specification.}
+\subsubsection*{HMM Specification}
 The two-state HMM follows the regime-switching framework of
 \citet{hamilton1989new}, using Gaussian emission distributions fitted
 to 20-day rolling log-returns and estimated via the Baum--Welch
@@ -318,19 +291,7 @@ matrix and emission parameters are estimated on training data only
 
 \subsubsection{State Space Construction}
 
-The base state vector at time $t$ is $S_t=\{P_t, I_t, E_t^{\mathrm{raw}}\}$:
-\begin{itemize}
-  \item $P_t=(r_{1t},\ldots,r_{Nt})$: daily returns ($N$ assets).
-  \item $I_t=(\mathrm{MA}_{5,t},\mathrm{MA}_{20,t},\mathrm{RSI}_t,
-    \mathrm{MACD}_t,\sigma_{it})$: standard technical indicators and
-    30-day EWMA volatility ($\lambda_{\mathrm{decay}}=0.94$).
-  \item $E_t^{\mathrm{raw}}=(e_{1t}^{\mathrm{raw}},\ldots,e_{Nt}^{\mathrm{raw}})$:
-    the official aggregate EID scores carried forward from the most
-    recent annual disclosure date $t_{\mathrm{disc}}(y)$.
-    If the actual release date is unknown, the conservative deadline
-    (April 30, year $y+1$) is used, ensuring strict look-ahead
-    prevention.
-\end{itemize}
+The base state vector at time $t$ is $S_t=\{P_t, I_t, E_t^{\mathrm{raw}}\}$, with three components. $P_t=(r_{1t},\ldots,r_{Nt})$ collects daily returns for $N$ assets. $I_t$ includes standard technical indicators, specifically 5-day and 20-day moving averages, the Relative Strength Index, MACD, and 30-day EWMA volatility with decay parameter $\lambda_{\mathrm{decay}}=0.94$. $E_t^{\mathrm{raw}}=(e_{1t}^{\mathrm{raw}},\ldots,e_{Nt}^{\mathrm{raw}})$ carries the official aggregate EID scores forward from the most recent annual disclosure date $t_{\mathrm{disc}}(y)$; where the precise release date is unknown, April 30 of year $y+1$ is used as a conservative deadline that ensures strict look-ahead prevention.
 EID scores are monotonically normalized:
 $\tilde{e}_{it}=e_{it}^{\mathrm{raw}}/\max_{i,t\in\mathcal{T}_{\mathrm{train}}}e_{it}^{\mathrm{raw}}$,
 preserving rank and interval ordering. During deployment (2022--2024),
@@ -358,15 +319,7 @@ $\mathrm{Green}_t=\sum_i w_{it}e_{it}^{\mathrm{raw}}$, and
 $\lambda_2(t)$ follows Proposition~\ref{prop:regime}.
 Hyperparameters: $\lambda_{\mathrm{risk}}=2.0$, $\lambda_1=0.5$.
 
-\paragraph{Transaction costs.}
-\begin{align}
-  \mathrm{TO}_t &= \tfrac{1}{2}\sum_{i=1}^N|w_{it}-w_{i,t-1}|,
-  \label{eq:turnover} \\
-  r_{p,t}^{\mathrm{net}} &= r_{p,t}^{\mathrm{gross}} - c\cdot\mathrm{TO}_t,
-  \label{eq:net_return}
-\end{align}
-with $c\in\{0.001,0.002,0.003\}$ (0.1--0.3\% per unit of turnover).
-Net returns are the primary performance measure.
+Transaction costs are modeled proportionally. Turnover is defined as $\mathrm{TO}_t = \tfrac{1}{2}\sum_{i=1}^N|w_{it}-w_{i,t-1}|$, and net portfolio return as $r_{p,t}^{\mathrm{net}} = r_{p,t}^{\mathrm{gross}} - c\cdot\mathrm{TO}_t$, where $c\in\{0.001,0.002,0.003\}$ covers the range of 0.1 to 0.3 percent per unit of turnover. Net returns are the primary performance measure reported throughout.
 
 \subsection{PPO Training}
 
@@ -403,52 +356,18 @@ Rollout length $T$ & 252 trading days \\
 \end{tabular}
 \end{table}
 
-\paragraph{Implementation.}
-The ReLU-based feedforward architecture follows standard deep learning
-practice \citep{lecun2015deep}. Training uses
-Python~3.10, \texttt{stable-baselines3}~v2.1, \texttt{PyTorch}~v2.1,
-CUDA~11.8. After each
-training run, \texttt{state\_dict} tensors are extracted layer-by-layer
-for Frobenius distance computation. Code: \url{https://github.com/wangweijia462/-}.
+The ReLU-based feedforward architecture follows standard deep learning practice \citep{lecun2015deep}. Training uses Python~3.10, \texttt{stable-baselines3}~v2.1, \texttt{PyTorch}~v2.1, and CUDA~11.8. After each training run, \texttt{state\_dict} tensors are extracted layer-by-layer for Frobenius distance computation.
 
 \subsection{Four Model Variants}
 
-\begin{itemize}
-  \item Model A --- Baseline PPO: state $\{P_t,I_t\}$; constant $\lambda_2=0.10$.
-  \item Model B --- PPO+EID: state $\{P_t,I_t,E_t\}$; constant $\lambda_2=0.10$.
-  \item Model C --- PPO+EID+Regime: state $\{P_t,I_t,E_t\}$; adaptive
-    $\lambda_2(t)$ via Proposition~\ref{prop:regime}.
-  \item Model D --- PPO+Regime without EID (ablation): state $\{P_t,I_t\}$;
-    adaptive $\lambda_2(t)$ via Proposition~\ref{prop:regime}. Isolates
-    the regime-reward contribution from the EID-signal contribution.
-\end{itemize}
-Models B vs.\ A: isolates EID signal (reward function held constant).
-Models C vs.\ D: isolates EID signal (regime reward held constant).
-Models D vs.\ A: isolates regime-reward design (EID held absent).
+Four models are compared. Model A is the baseline PPO with state $\{P_t,I_t\}$ and a fixed $\lambda_2=0.10$. Model B extends the state to $\{P_t,I_t,E_t\}$ while holding $\lambda_2$ constant, so the comparison B versus A isolates the EID contribution with the reward function held fixed. Model C uses both EID and the adaptive $\lambda_2(t)$ of Proposition~\ref{prop:regime}. Model D uses the adaptive $\lambda_2(t)$ but withholds EID, making D versus A isolate the regime-weighting contribution and C versus D isolate EID with regime weighting held constant. Together, the four models form a $2\times2$ factorial design that separately identifies each component's contribution to stability and performance.
 
 \subsection{Neural Network Structural Stability}
 \label{sec:stability_metric}
 
 \subsubsection{Justification of Frobenius Distance}
 
-We use normalized Frobenius distance between independently trained
-networks as a stability metric, motivated by three considerations.
-
-\emph{Theoretical grounding.}
-Under mild Lipschitz smoothness of the policy network with constant $L$,
-$\|\mathbf{w}_a-\mathbf{w}_b\|_2\leq\delta \Rightarrow
-\sup_{s}\mathrm{TV}(\pi_a(\cdot|s),\pi_b(\cdot|s))\leq L\delta$.
-Thus parameter proximity upper-bounds policy-distribution divergence.
-
-\emph{Sensitivity to spurious fitting.}
-Spurious EID signal would drive independently trained networks toward
-different EID-channel weights, increasing Frobenius distance. Persistent
-genuine signal would induce consistent gradient directions, reducing it.
-
-\emph{Computation and interpretability.}
-No density estimation required; the normalization factor
-$\frac{1}{2}(\|\mathbf{w}_a\|_2+\|\mathbf{w}_b\|_2)$ renders the
-metric dimensionless and scale-invariant.
+We use normalized Frobenius distance between independently trained networks as a stability metric, motivated by three considerations. First, under mild Lipschitz smoothness of the policy network with constant $L$, $\|\mathbf{w}_a-\mathbf{w}_b\|_2\leq\delta$ implies $\sup_{s}\mathrm{TV}(\pi_a(\cdot|s),\pi_b(\cdot|s))\leq L\delta$, so parameter proximity upper-bounds policy-distribution divergence. Second, spurious EID signal would drive independently trained networks toward different EID-channel weights, increasing the distance, while a persistent genuine signal induces consistent gradient directions, reducing it. Third, the metric requires no density estimation; the normalization factor $\frac{1}{2}(\|\mathbf{w}_a\|_2+\|\mathbf{w}_b\|_2)$ renders it dimensionless and scale-invariant.
 
 \begin{remark}[Limitations]
 Lower Frobenius distance is necessary but not sufficient for policy
@@ -508,26 +427,11 @@ availability that could support future causal designs
 sub-category decomposition, preserving the public information set
 available to investors.
 
-\paragraph{Data integrity.}
-EID scores enter the trading environment only after their public release
-date, using April 30 as a conservative deadline where the precise date
-is unknown, preventing look-ahead bias. No imputation, winsorization, or
-PCA transformation is applied. Industry-residualized EID is tested as a
-robustness check in Section~\ref{sec:industry_neutral}.
-
-\paragraph{2025 coverage.}
-The 2025 records document database coverage for the full period
-($N=1{,}789$ firms) but contribute to portfolio decisions only if
-EID scores were publicly released before the relevant trading date
-in the 2022--2024 out-of-sample window.
+EID scores enter the trading environment only after their public release date; where the precise date is unknown, April 30 is used as a conservative deadline to prevent look-ahead bias. No imputation, winsorization, or PCA transformation is applied. The 2025 records extend database coverage to 1,789 firms but contribute to portfolio decisions only if EID scores were publicly released before the relevant trading date in the 2022--2024 evaluation window. Industry-residualized EID is tested as a robustness check in Section~\ref{sec:industry_neutral}.
 
 \subsection{Market Data and Risk-Free Rate}
 
-Daily price and volume data: Chinese Stock Connect, Shanghai and
-Shenzhen Stock Exchanges, Bloomberg Terminal, and Wind Information
-Services (WIND). Price series are split-, dividend-, and
-corporate-action-adjusted. Risk-free rate: 1-year Chinese government
-bond yield (China Central Depository and Clearing Company).
+Daily price and volume data are sourced from the Chinese Stock Connect, the Shanghai and Shenzhen Stock Exchanges, Bloomberg Terminal, and Wind Information Services. Price series are adjusted for splits, dividends, and corporate actions. The risk-free rate is the 1-year Chinese government bond yield obtained from the China Central Depository and Clearing Company.
 
 \subsection{Sample Selection}
 
@@ -537,7 +441,7 @@ complete price data for 2016--2024, EID scores for at least three
 consecutive years, and no bankruptcy or extended suspension. The final
 sample contains approximately 1,800 stocks.
 
-\paragraph{Survivorship-bias check.}
+\subsubsection*{Survivorship Bias}
 To address potential survivorship bias from the continuous-listing
 requirement, we construct an alternative unbalanced panel that includes
 firms delisted or suspended during 2016--2024, treating each delisting as a forced liquidation at the actual
@@ -549,7 +453,7 @@ performance metrics decrease by 0.03--0.06 Sharpe points due to the
 added volatility. Full unbalanced panel results are available in the
 online supplement.
 
-Training: 2016--2021. Out-of-sample evaluation: 2022--2024.
+The training period covers 2016--2021 and the out-of-sample evaluation covers 2022--2024.
 
 \subsection{Descriptive Statistics}
 
@@ -1100,7 +1004,7 @@ Model A's 0.36, yet its mean Frobenius distance of $\bar{D}=0.471$
 is statistically indistinguishable from Model A at $p=0.193$. Model C
 achieves both the highest Sharpe at 0.58 and the lowest Frobenius
 distance at $\bar{D}=0.244$. The split outcome---performance without
-stability in Model D, both in Model C---reflects two distinct
+stability in Model D but both in Model C, reflects two distinct
 mechanisms. Regime weighting $\lambda_2(t)$ dynamically scales
 environmental preference in the reward function; because it operates
 through the reward signal, it can raise returns without systematically
@@ -1109,10 +1013,7 @@ introduces a persistent informational signal that influences the
 gradient at each training step, producing the parameter consistency
 that Frobenius distance captures. That these two mechanisms can be
 independently activated is a design feature, not an accidental
-outcome: practitioners seeking stability---e.g., as a criterion for
-automated retraining triggers---should prioritize the EID component,
-while regime weighting adds value as a return-enhancement layer on top
-of that foundation.
+outcome: practitioners seeking stability, such as automated retraining triggers, should prioritize the EID component, while regime weighting adds value as a return-enhancement layer on top of that foundation.
 
 \subsection{Limitations}
 
