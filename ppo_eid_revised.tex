@@ -11,10 +11,10 @@
 %%    (R1) Wasserstein metric unit note; (R2) Software versions added
 %%    (R3) HMM specification added after Proposition 1
 %% ============================================================
-\documentclass[10pt,twocolumn]{article}
+\documentclass[12pt]{article}
 
 %% ---- Layout ------------------------------------------------
-\usepackage[margin=0.75in,top=0.85in,bottom=0.85in]{geometry}
+\usepackage[margin=1in,top=1in,bottom=1in]{geometry}
 
 %% ---- Math --------------------------------------------------
 \usepackage{amsmath,amssymb,amsthm}
@@ -69,32 +69,27 @@ Xi'an 710049, China \\
 
 %% =============================================================
 \begin{abstract}
-Environmental Information Disclosure (EID) is an emerging macroeconomic
-data element in China's capital markets. This paper embeds publicly
-reported EID scores directly into a Proximal Policy Optimization (PPO)
-state space and tests whether this information improves neural-network
-structural stability. Using 59,051 firm-year EID observations (Hexun
-EID Database) for Chinese listed companies from 2008 to 2025 and
-out-of-sample portfolio tests for 2022--2024, the PPO+EID+Regime model
-reduces normalized Frobenius parameter distance by 36\%
-(A$\to$B, bootstrap CI: [27\%, 46\%], $d=1.84$) and 50\%
-(A$\to$C, CI: [41\%, 59\%], $d=2.01$) relative to baseline PPO
-($p<0.001$). A permutation test confirms this improvement reflects
-EID's firm-level economic content rather than dimensionality expansion.
-An ablation model (PPO+Regime, no EID) achieves a statistically
-insignificant 3.3\% reduction in Frobenius distance, isolating
-parameter stability gains specifically to EID. On a \emph{net-return}
-basis (proportional cost 0.2\% per turnover unit), Model C achieves a
-Sharpe ratio of 0.58 versus 0.29 for Markowitz MVP. A mediation
-analysis attributes 28\% of the stability gain to the reward-variance
-channel; the remaining share operates through pathways not yet
-precisely identified, and causal interpretation requires a stronger
-identification design.
-\textbf{Replication}: Code at \url{https://github.com/wangweijia462/-}
-(anonymous reviewer access available upon request during peer review;
-repository made public and permanent DOI registered upon acceptance);
-data construction notes provided with submission; licensed raw market
-data cannot be redistributed.
+Environmental Information Disclosure is an emerging macroeconomic data
+element in China's capital markets. This paper embeds publicly reported
+EID scores directly into a Proximal Policy Optimization state space and
+tests whether this information improves neural-network structural
+stability. Using 59,051 firm-year EID observations from the Hexun EID
+Database for Chinese listed companies from 2008 to 2025, with
+out-of-sample portfolio evaluation over 2022--2024, the model that
+combines EID and regime weighting reduces normalized Frobenius parameter
+distance by 36\% relative to baseline PPO when EID is added without
+regime conditioning, and by 50\% when both components are included; both
+improvements are significant at $p<0.001$. A permutation test confirms
+that the improvement reflects EID's firm-level economic content rather
+than dimensionality expansion. A regime-only ablation model, which
+withholds EID entirely, achieves a statistically insignificant 3.3\%
+reduction, isolating parameter stability gains specifically to EID. At a
+proportional transaction cost of 0.2\% per turnover unit, the full model
+achieves a net Sharpe ratio of 0.58 versus 0.29 for the Markowitz
+minimum-variance benchmark. A mediation analysis attributes 28\% of the
+stability gain to the reward-variance channel; the remaining share
+operates through pathways not yet precisely identified, and causal
+interpretation requires a stronger identification design.
 
 \medskip
 \noindent\textbf{Keywords:} Green Finance, Environmental Information
@@ -131,11 +126,11 @@ and regime conditioning as the source of the improvement.
 \paragraph{A note on causal language.}
 Throughout this paper, claims are \emph{associational}: models trained
 with EID exhibit lower normalized Frobenius distance across training
-partitions. The hypothesized causal chain
-(EID $\to$ lower reward noise $\to$ lower gradient variance $\to$ lower
-Frobenius distance) is theoretically motivated and empirically
-\emph{consistent with} the data, but the observational design does not
-possess the identification conditions for a causal proof. We use
+partitions. The hypothesized causal chain --- EID reduces reward noise,
+which lowers gradient variance, which lowers Frobenius distance --- is
+theoretically motivated and empirically consistent with the data, but
+the observational design does not possess the identification conditions
+for a causal proof. We use
 ``associated with'' and ``consistent with'' rather than ``causes''
 throughout, and we identify the additional evidence---quasi-natural
 experiment designs exploiting mandatory disclosure policy changes---that
@@ -145,8 +140,9 @@ would be needed to establish causality.
 The paper's primary contribution is methodological: we establish
 normalized Frobenius distance as a diagnostic for state-variable
 quality in DRL portfolio optimization, and we introduce a controlled
-ablation design (PPO+Regime, no EID, Model D) that isolates precisely
-what EID adds beyond regime conditioning. A companion empirical
+ablation design --- Model D, which uses regime weighting but withholds
+EID --- that isolates precisely what EID adds beyond regime
+conditioning. A companion empirical
 contribution is the mediation decomposition, which attributes 28\% of
 the stability improvement to the reward-variance channel and explicitly
 flags the remaining share as an open measurement problem. Translating
@@ -187,8 +183,8 @@ a firm-level regression of realized policy-shock exposure on EID scores,
 providing an empirical check. We additionally assume that policy shocks
 are on net associated with \emph{negative} firm-level abnormal returns,
 consistent with the negative downside-loss estimates in
-Table~\ref{tab:alpha_test}; if shocks were predominantly positive
-(e.g., subsidy announcements), the LPM channel would not apply.
+Table~\ref{tab:alpha_test}; if shocks were predominantly positive --- subsidy announcements, for
+example --- the LPM channel would not apply.
 \end{remark}
 
 \paragraph{Hypothesized mechanism chain.}
@@ -208,19 +204,19 @@ Figure~\ref{fig:mechanism} visualizes each link with its corresponding
 empirical test annotation.
 
 %% ---- Figure 1: Policy-risk filtering mechanism (inline) ----
-\begin{figure*}[!t]
+\begin{figure}[!t]
 \centering
 \begin{tikzpicture}[
-  node distance=0.9cm and 1.5cm,
+  node distance=0.8cm and 1.2cm,
   box/.style={rectangle, rounded corners=3pt, draw=black!70,
-    fill=black!4, align=center, minimum height=0.75cm, text width=2.5cm,
-    font=\small},
+    fill=black!4, align=center, minimum height=0.7cm, text width=2.0cm,
+    font=\footnotesize},
   mbox/.style={rectangle, rounded corners=3pt, draw=blue!60!black,
-    fill=blue!8, align=center, minimum height=0.75cm, text width=2.5cm,
-    font=\small},
+    fill=blue!8, align=center, minimum height=0.7cm, text width=2.0cm,
+    font=\footnotesize},
   rbox/.style={rectangle, rounded corners=3pt, draw=green!50!black,
-    fill=green!8, align=center, minimum height=0.75cm, text width=2.6cm,
-    font=\small},
+    fill=green!8, align=center, minimum height=0.7cm, text width=2.1cm,
+    font=\footnotesize},
   arrow/.style={-{Latex[length=2.5mm]}, thick, draw=black!70}
 ]
 \node[box] (eid)   {Public EID\\Disclosure};
@@ -234,16 +230,16 @@ empirical test annotation.
 \draw[arrow] (shock) -- (lpm);
 \draw[arrow] (lpm) -- (grad);
 \draw[arrow] (grad) -- (frob);
-\node[box, below=0.9cm of info,  text width=2.8cm, font=\scriptsize,
+\node[box, below=0.8cm of info,  text width=2.2cm, font=\scriptsize,
   draw=gray!60, fill=gray!5]
   (t1) {Test: Table~\ref{tab:alpha_test}\\$\hat{a}_1=-0.016^{**}$};
-\node[box, below=0.9cm of lpm,   text width=2.8cm, font=\scriptsize,
+\node[box, below=0.8cm of lpm,   text width=2.2cm, font=\scriptsize,
   draw=gray!60, fill=gray!5]
   (t2) {Mediation Step 1\\$\hat\beta_1=-0.214^{***}$};
-\node[box, below=0.9cm of grad,  text width=2.8cm, font=\scriptsize,
+\node[box, below=0.8cm of grad,  text width=2.2cm, font=\scriptsize,
   draw=gray!60, fill=gray!5]
   (t3) {Mediation Step 2\\$\hat\delta_1=+0.318^{***}$};
-\node[box, below=0.9cm of frob,  text width=2.8cm, font=\scriptsize,
+\node[box, below=0.8cm of frob,  text width=2.2cm, font=\scriptsize,
   draw=gray!60, fill=gray!5]
   (t4) {Primary Result\\$\Delta\bar{D}=36\%$, $p<.001$};
 \draw[arrow, gray!60, dashed] (info) -- (t1);
@@ -252,12 +248,11 @@ empirical test annotation.
 \draw[arrow, gray!60, dashed] (frob) -- (t4);
 \end{tikzpicture}
 \caption{Policy-Risk Filtering Mechanism: EID to Parameter Stability.
-Top row shows the hypothesized causal chain (Equation~\ref{eq:chain}).
-Bottom row shows the empirical tests at each step. The chain is a
-\emph{Motivating Assumption}; each box reports associational evidence
-consistent with that link.}
+Top row shows the hypothesized causal chain; bottom row shows empirical
+tests at each step. The chain is a Motivating Assumption; each box
+reports associational evidence consistent with that link.}
 \label{fig:mechanism}
-\end{figure*}
+\end{figure}
 
 \begin{proposition}[Unified Regime-Adaptive Green Preference]
 \label{prop:regime}
@@ -386,16 +381,13 @@ for Frobenius distance computation. Code: \url{https://github.com/wangweijia462/
 \subsection{Four Model Variants}
 
 \begin{itemize}
-  \item \textbf{Model A (Baseline PPO)}: State $\{P_t,I_t\}$; constant
-    $\lambda_2=0.10$.
-  \item \textbf{Model B (PPO+EID)}: State $\{P_t,I_t,E_t\}$; constant
-    $\lambda_2=0.10$.
-  \item \textbf{Model C (PPO+EID+Regime)}: State $\{P_t,I_t,E_t\}$;
-    adaptive $\lambda_2(t)$ via Proposition~\ref{prop:regime}.
-  \item \textbf{Model D (PPO+Regime, no EID)}: State $\{P_t,I_t\}$;
-    adaptive $\lambda_2(t)$ via Proposition~\ref{prop:regime}.
-    \emph{Ablation}: isolates the regime-reward contribution from the
-    EID-signal contribution.
+  \item Model A --- Baseline PPO: state $\{P_t,I_t\}$; constant $\lambda_2=0.10$.
+  \item Model B --- PPO+EID: state $\{P_t,I_t,E_t\}$; constant $\lambda_2=0.10$.
+  \item Model C --- PPO+EID+Regime: state $\{P_t,I_t,E_t\}$; adaptive
+    $\lambda_2(t)$ via Proposition~\ref{prop:regime}.
+  \item Model D --- PPO+Regime without EID (ablation): state $\{P_t,I_t\}$;
+    adaptive $\lambda_2(t)$ via Proposition~\ref{prop:regime}. Isolates
+    the regime-reward contribution from the EID-signal contribution.
 \end{itemize}
 Models B vs.\ A: isolates EID signal (reward function held constant).
 Models C vs.\ D: isolates EID signal (regime reward held constant).
@@ -409,18 +401,18 @@ Models D vs.\ A: isolates regime-reward design (EID held absent).
 We use normalized Frobenius distance between independently trained
 networks as a stability metric, motivated by three considerations.
 
-\textbf{Theoretical grounding.}
+\emph{Theoretical grounding.}
 Under mild Lipschitz smoothness of the policy network with constant $L$,
 $\|\mathbf{w}_a-\mathbf{w}_b\|_2\leq\delta \Rightarrow
 \sup_{s}\mathrm{TV}(\pi_a(\cdot|s),\pi_b(\cdot|s))\leq L\delta$.
 Thus parameter proximity upper-bounds policy-distribution divergence.
 
-\textbf{Sensitivity to spurious fitting.}
+\emph{Sensitivity to spurious fitting.}
 Spurious EID signal would drive independently trained networks toward
 different EID-channel weights, increasing Frobenius distance. Persistent
 genuine signal would induce consistent gradient directions, reducing it.
 
-\textbf{Computation and interpretability.}
+\emph{Computation and interpretability.}
 No density estimation required; the normalization factor
 $\frac{1}{2}(\|\mathbf{w}_a\|_2+\|\mathbf{w}_b\|_2)$ renders the
 metric dimensionless and scale-invariant.
@@ -428,11 +420,12 @@ metric dimensionless and scale-invariant.
 \begin{remark}[Limitations]
 Lower Frobenius distance is necessary but not sufficient for policy
 quality. Two networks can be parameter-close yet both learn wrong
-allocation directions. We therefore require: (a) signed positive EID
-attribution ($w_{\mathrm{EID}}>0$, Table~\ref{tab:feature_importance});
-(b) superior net-of-cost out-of-sample performance
-(Table~\ref{tab:net_performance}); (c) permutation tests destroying EID
-economic content (Section~\ref{sec:permutation}).
+allocation directions. We therefore require three additional checks:
+signed positive EID attribution with $w_{\mathrm{EID}}>0$
+(Table~\ref{tab:feature_importance}), superior net-of-cost
+out-of-sample performance (Table~\ref{tab:net_performance}), and
+permutation tests that destroy EID economic content
+(Section~\ref{sec:permutation}).
 \end{remark}
 
 \subsubsection{Metric Definitions}
@@ -448,17 +441,17 @@ Summary statistics over $K$ partition pairs:
 $\bar{D}=\binom{K}{2}^{-1}\!\sum_{i<j}D_{\mathrm{norm}}(M_i,M_j)$;
 $D_{\max}=\max_{i,j}D_{\mathrm{norm}}(M_i,M_j)$;
 $\mathrm{CV}_D=\mathrm{std}(D)/\bar{D}$.
-Statistical inference uses (i) Mann--Whitney $U$ tests, (ii) bootstrap
-CIs ($B=1{,}000$ resamples of the distance matrix), and (iii) Cohen's
-$d$ effect sizes.
+Statistical inference uses Mann--Whitney $U$ tests, bootstrap
+confidence intervals from $B=1{,}000$ resamples of the distance matrix,
+and Cohen's $d$ effect sizes.
 
 \subsubsection{Partitioning Strategy}
 
-Three partition dimensions:
-\textbf{Temporal} (4-year rolling windows: 2016--2019, 2018--2021,
-2020--2023, 2021--2024; six pairs);
-\textbf{Market regime} (bull vs.\ bear, one pair);
-\textbf{Sector} (high-emission vs.\ low-emission, one pair).
+Three partition dimensions are used. Temporal partitions divide the
+data into 4-year rolling windows covering 2016--2019, 2018--2021,
+2020--2023, and 2021--2024, yielding six pairs. The market-regime
+partition separates bull and bear periods into one pair. The sector
+partition separates high-emission from low-emission firms into one pair.
 All eight pairs generate one distance each; $\bar{D}$ averages across
 all eight.
 
@@ -469,21 +462,20 @@ all eight.
 \subsection{EID Data}
 
 The primary dataset comprises 59,051 firm-year observations from the
-\textbf{Hexun Environmental Information Disclosure (EID) Database}
-(hxzq.net), which aggregates annual corporate environmental reports,
-sustainability reports, and regulatory filings for Chinese A-share
-listed companies into a composite score from 0 to 100 (typical range
-0--50). This database has been widely used in Chinese environmental
+Hexun Environmental Information Disclosure Database, which aggregates
+annual corporate environmental reports, sustainability reports, and
+regulatory filings for Chinese A-share listed companies into a
+composite score from 0 to 100, with typical values in the 0--50 range. This database has been widely used in Chinese environmental
 disclosure research \citep{liu2020}. The aggregate score is used
 without sub-category decomposition, preserving the public information
 set available to investors.
 
 \paragraph{Data integrity.}
 EID scores enter the trading environment only after their public release
-date (or April 30 conservatively), preventing look-ahead bias. No
-imputation of missing scores, no winsorization, no PCA transformation.
-Industry-residualized EID is tested as a robustness check
-(Section~\ref{sec:industry_neutral}).
+date, using April 30 as a conservative deadline where the precise date
+is unknown, preventing look-ahead bias. No imputation, winsorization, or
+PCA transformation is applied. Industry-residualized EID is tested as a
+robustness check in Section~\ref{sec:industry_neutral}.
 
 \paragraph{2025 coverage.}
 The 2025 records document database coverage for the full period
@@ -501,24 +493,23 @@ bond yield (China Central Depository and Clearing Company).
 
 \subsection{Sample Selection}
 
-Inclusion criteria: (1) continuously listed on Shanghai/Shenzhen;
-(2) daily average volume $\geq$ CNY\,1M; (3) complete data 2016--2024;
-(4) EID scores for $\geq$3 consecutive years; (5) not in bankruptcy or
-extended suspension. Final sample: $\approx$1,800 stocks.
+Inclusion criteria require stocks to be continuously listed on Shanghai
+or Shenzhen exchanges with daily average volume at or above CNY 1M,
+complete price data for 2016--2024, EID scores for at least three
+consecutive years, and no bankruptcy or extended suspension. The final
+sample contains approximately 1,800 stocks.
 
 \paragraph{Survivorship-bias check.}
 To address potential survivorship bias from the continuous-listing
 requirement, we construct an alternative unbalanced panel that includes
-firms delisted or suspended during 2016--2024, treating each delisting as
-a forced liquidation at the actual last-trading-day closing price (return
-computed through the final trading session) and redistributing the freed
-portfolio weight pro-rata to surviving assets from the next rebalancing
-date.
-The stability finding ($\bar{D}$ reduction: 32\% A$\to$B, 46\% A$\to$C)
-is robust to this inclusion, though absolute performance metrics
-decrease by 0.03--0.06 Sharpe points due to the added volatility.
-The Appendix (available in the online supplement) reports the full
-unbalanced panel results.
+firms delisted or suspended during 2016--2024, treating each delisting as a forced liquidation at the actual
+last-trading-day closing price and redistributing the freed portfolio
+weight pro-rata to surviving assets from the next rebalancing date.
+The stability finding, a $\bar{D}$ reduction of 32\% for A$\to$B and
+46\% for A$\to$C, is robust to this inclusion, though absolute
+performance metrics decrease by 0.03--0.06 Sharpe points due to the
+added volatility. Full unbalanced panel results are available in the
+online supplement.
 
 Training: 2016--2021. Out-of-sample evaluation: 2022--2024.
 
@@ -559,9 +550,9 @@ requirements. SD~=~standard deviation.
 \subsubsection{Normalized Frobenius Distance Across All Four Models}
 
 Table~\ref{tab:frobenius} reports stability metrics for all four models
-with bootstrap confidence intervals ($B=1{,}000$) and ablation results.
+with bootstrap confidence intervals and ablation results.
 
-\begin{table*}[t]
+\begin{table}[t]
 \centering
 \caption{Parameter Stability Metrics Across All Four Models}
 \label{tab:frobenius}
@@ -584,9 +575,9 @@ $\mathrm{CV}_D$ & 0.58 & 0.55 & 0.41 & 0.33 \\
 \hspace{4pt}A vs.\ C (full): MW $U$ & \multicolumn{4}{l}{$U=1{,}869$, $p<0.001$, $r=0.67$; $d=2.01$ [large]} \\
 \midrule
 \multicolumn{5}{l}{\textit{Reduction in $\bar{D}$ relative to Model A}} \\
-\hspace{4pt}A$\to$D (regime contribution) & \multicolumn{4}{l}{3.3\%; boot.\ CI: [$-1.1\%$, $8.2\%$] \textbf{(not significant)}} \\
-\hspace{4pt}A$\to$B (EID contribution) & \multicolumn{4}{l}{36.0\%; boot.\ CI: [27.3\%, 45.8\%] \textbf{($p<0.001$)}} \\
-\hspace{4pt}A$\to$C (joint contribution) & \multicolumn{4}{l}{49.7\%; boot.\ CI: [41.2\%, 58.6\%] \textbf{($p<0.001$)}} \\
+\hspace{4pt}A$\to$D (regime contribution) & \multicolumn{4}{l}{3.3\%; boot.\ CI: [$-1.1\%$, $8.2\%$], not significant} \\
+\hspace{4pt}A$\to$B (EID contribution) & \multicolumn{4}{l}{36.0\%; boot.\ CI: [27.3\%, 45.8\%], $p<0.001$} \\
+\hspace{4pt}A$\to$C (joint contribution) & \multicolumn{4}{l}{49.7\%; boot.\ CI: [41.2\%, 58.6\%], $p<0.001$} \\
 \midrule
 \multicolumn{5}{l}{\textit{Permutation test (EID labels shuffled; 500 permutations)}} \\
 \hspace{4pt}$\bar{D}$ under null (shuffled EID) & \multicolumn{4}{l}{$0.479\pm0.031$, indistinguishable from Model A; $p<0.002$ vs.\ Model B} \\
@@ -602,7 +593,7 @@ resamples of the full $10\times10\times8$ distance array. The ablation
 significantly improve parameter stability, isolating the stability gain
 to the EID signal. MW = Mann--Whitney; $r$ = rank-biserial correlation.
 \end{tablenotes}
-\end{table*}
+\end{table}
 
 The contrast between Model D and Model B is the key result. Model D
 adds regime-adaptive reward weighting to the baseline but withholds
@@ -631,7 +622,7 @@ pairwise normalized Frobenius distances across the four models.
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  width=0.88\columnwidth, height=4.8cm,
+  width=0.82\textwidth, height=5.5cm,
   xlabel={Normalized Frobenius Distance $D_{\mathrm{norm}}$},
   ylabel={Density},
   xmin=0, xmax=1.0,
@@ -883,12 +874,12 @@ directional prediction.
 \subsection{Secondary Finding: Portfolio Performance}
 \label{sec:performance}
 
-\begin{table*}[t]
+\begin{table}[t]
 \centering
 \caption{Net Performance Metrics (2022--2024 Out-of-Sample)}
 \label{tab:net_performance}
-\scriptsize
-\setlength{\tabcolsep}{3.0pt}
+\small
+\setlength{\tabcolsep}{4.0pt}
 \begin{tabular}{lcccccccc}
 \toprule
 Metric & Markow. & EW & Mom. & R.Par. & ESG & Mod.\ A & Mod.\ D & Mod.\ C \\
@@ -903,7 +894,7 @@ Max DD (\%) & $-35.2$ & $-42.1$ & $-38.6$ & $-33.1$ & $-30.5$ & $-24.3$ & $-23.1
 Ann.\ Return (\%) & 6.1 & 7.0 & 7.4 & 6.8 & 6.7 & 8.4 & 8.8 & 9.7 / 9.2 \\
 Sharpe & 0.29 & 0.27 & 0.31 & 0.30 & 0.33 & 0.50 & 0.54 & 0.60 / 0.56 \\
 \midrule
-\multicolumn{9}{l}{\textit{Net returns ($c$=0.002), \textbf{primary}}} \\
+\multicolumn{9}{l}{\textit{Net returns ($c$=0.002), primary specification}} \\
 Ann.\ Return (\%) & 6.0 & 6.9 & 7.0 & 6.7 & 6.6 & 7.9 & 8.3 & 9.1 / 8.7 \\
 Sharpe & 0.28 & 0.27 & 0.29 & 0.29 & 0.31 & 0.47 & 0.51 & 0.58 / 0.53 \\
 Max DD (\%) & $-35.3$ & $-42.2$ & $-39.0$ & $-33.3$ & $-30.8$ & $-24.7$ & $-23.4$ & $-21.3$ / $-22.4$ \\
@@ -930,7 +921,7 @@ between Model C and earlier models \emph{cannot} be causally attributed
 to any single component as both EID and regime reward differ
 simultaneously between A and C.
 \end{tablenotes}
-\end{table*}
+\end{table}
 
 Figure~\ref{fig:cum_returns} compares net Sharpe ratios across all eight
 strategies for the 2022--2024 out-of-sample period.
@@ -940,8 +931,8 @@ strategies for the 2022--2024 out-of-sample period.
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  xbar, bar width=7pt,
-  width=0.88\columnwidth, height=5.8cm,
+  xbar, bar width=8pt,
+  width=0.82\textwidth, height=6.5cm,
   xlabel={Net Sharpe Ratio ($c=0.002$, 2022--2024)},
   symbolic y coords={MKW,EW,MOM,RP,ESG,MA,MD,MC},
   ytick=data,
@@ -984,21 +975,21 @@ series are available in the online supplement.}
 \subsection{Permutation Test}
 \label{sec:permutation}
 
-Under 500 EID-label shuffles (within-year, cross-firm), $\bar{D}$
-reverts to $0.479\pm0.031$---statistically indistinguishable from Model
-A ($\bar{D}=0.487$) and significantly above Model B ($p<0.002$).
-This rules out the dimensionality expansion explanation.
+Under 500 EID-label shuffles that reassign scores randomly across firms
+within each year, $\bar{D}$ reverts to $0.479\pm0.031$, statistically
+indistinguishable from Model A and significantly above Model B
+($p<0.002$). This rules out the dimensionality expansion explanation.
 
 \subsection{Alternative Stability Metrics}
 
-\textbf{Spectral distance} (eigenvalue difference of parameter covariance
-matrices): C achieves 0.156 vs.\ 0.289 for A.
-\textbf{Wasserstein distance}: C achieves 0.234 vs.\ 0.487 for A
-(Wasserstein and Frobenius distances are in different units; the
-numerical coincidence of 0.487 for Model A under both metrics is
-incidental and does not imply equivalence).
-\textbf{Cosine similarity}: C achieves 0.82 vs.\ 0.71 for A.
-All three metrics qualitatively confirm the Frobenius result.
+Three alternative metrics all qualitatively confirm the Frobenius
+result. Spectral distance, measured as the eigenvalue difference of
+parameter covariance matrices, yields 0.156 for Model C versus 0.289
+for Model A. Wasserstein distance yields 0.234 for Model C versus 0.487
+for Model A; note that Wasserstein and Frobenius distances are in
+different units, so the numerical coincidence of 0.487 under both
+metrics for Model A is incidental and does not imply equivalence.
+Cosine similarity is 0.82 for Model C versus 0.71 for Model A.
 
 \subsection{Industry-Neutral EID}
 \label{sec:industry_neutral}
@@ -1012,12 +1003,12 @@ benefits.
 
 \subsection{Hyperparameter Sensitivity}
 
-Grid search over $\lambda_2\in[0.01,0.25]$, $\varepsilon\in[0.1,0.3]$,
-$\alpha\in[0.0001,0.001]$: stability improvement holds across 95\% of
-the tested parameter combinations. Marginal degradation is observed only
-near the search boundary $\lambda_2=0.25$ (suggesting potential overweighting
-of the green preference beyond that point) and at $\varepsilon=0.1$
-(minimum clipping, tightest trust-region constraint).
+A grid search over $\lambda_2\in[0.01,0.25]$, $\varepsilon\in[0.1,0.3]$,
+and $\alpha\in[0.0001,0.001]$ shows that the stability improvement holds
+across 95\% of tested parameter combinations. Marginal degradation
+appears only near the search boundary at $\lambda_2=0.25$, suggesting
+potential overweighting of the green preference beyond that point, and
+at $\varepsilon=0.1$, the tightest trust-region constraint tested.
 
 \subsection{Out-of-Distribution: Policy Shock Events}
 
@@ -1025,10 +1016,10 @@ During environmental regulation announcement windows (2022 ETS
 expansion, 2023 water-pollution enforcement), Model C exhibits lower
 drawdowns and smaller volatility spikes than Model A, consistent with
 the policy-risk filtering mechanism. However, these comparisons are
-descriptive: events are not randomized and confounds (firm size,
-liquidity) are not controlled. A clean causal test would require an
-exogenous shock to EID information availability (e.g., staggered
-mandatory disclosure policies), which is beyond the current design.
+descriptive: events are not randomized and firm-size and liquidity
+confounds are not controlled. A clean causal test would require an exogenous shock to EID information
+availability --- staggered mandatory disclosure policies, for instance
+--- which is beyond the current design.
 
 %% =============================================================
 \section{Discussion}
@@ -1037,9 +1028,9 @@ mandatory disclosure policies), which is beyond the current design.
 \subsection{Interpretation of Results}
 
 Table~\ref{tab:frobenius} establishes that regime-adaptive reward
-weighting alone (Model D, $p=0.193$, $d=0.21$) does not move the
-stability needle, whereas EID inclusion (Model B) does so by 36\%
-($p<0.001$, $d=1.84$). The mediation results in
+weighting alone --- Model D --- does not move the stability needle
+($p=0.193$, $d=0.21$), whereas adding EID --- Model B --- reduces
+mean distance by 36\% ($p<0.001$, $d=1.84$). The mediation results in
 Table~\ref{tab:mediation} trace 28\% of this gain to the
 reward-variance channel: EID reduces firm-level downside risk
 exposure, which smooths the reward signal, which in turn lowers
@@ -1048,9 +1039,10 @@ through pathways not yet instrumented---likely including direct
 informational effects on the state-transition distribution that bypass
 the reward function.
 
-For performance (Table~\ref{tab:net_performance}), both EID and regime
-weighting contribute: Model D (regime only) outperforms Model A, while
-Model C (EID + regime) outperforms Model D. Performance gains
+For performance, both EID and regime weighting contribute: Model D,
+which uses regime weighting without EID, outperforms Model A, while
+Model C, which adds EID on top of regime weighting, outperforms Model D
+(Table~\ref{tab:net_performance}). Performance gains
 \emph{cannot} be causally attributed to any single component without a
 controlled experiment.
 
@@ -1061,10 +1053,10 @@ exposure, consistent with pre-disclosed regulatory adaptation capacity.
 
 \paragraph{Separability of stability and performance.}
 Model D posts a Sharpe ratio of 0.44 at $c=0.002$, outperforming
-Model A's 0.36, yet its Frobenius distance ($\bar{D}=0.471$) is
-statistically indistinguishable from Model A ($p=0.193$). Model C
-achieves both the highest Sharpe (0.58) and the lowest Frobenius
-distance ($\bar{D}=0.244$). The split outcome---performance without
+Model A's 0.36, yet its mean Frobenius distance of $\bar{D}=0.471$
+is statistically indistinguishable from Model A at $p=0.193$. Model C
+achieves both the highest Sharpe at 0.58 and the lowest Frobenius
+distance at $\bar{D}=0.244$. The split outcome---performance without
 stability in Model D, both in Model C---reflects two distinct
 mechanisms. Regime weighting $\lambda_2(t)$ dynamically scales
 environmental preference in the reward function; because it operates
@@ -1084,16 +1076,16 @@ of that foundation.
 \paragraph{Causal identification.}
 The full causal chain is not empirically established. The mediation
 analysis accounts for only 28\% of the stability improvement through
-the reward-variance channel. A cleaner design---e.g., a
+the reward-variance channel. A cleaner design would be needed for causal claims --- ideally a
 difference-in-differences exploiting staggered mandatory disclosure
 requirements under China's 2015 Environmental Protection Law
-amendments---would be needed for causal claims.
+amendments.
 
 \paragraph{Transaction costs and market impact.}
-DRL strategies exhibit higher turnover (Model C: 58\% annually) than
-passive benchmarks. The net Sharpe advantage persists at 0.1--0.3\%
+DRL strategies exhibit higher turnover than passive benchmarks; Model C
+turns over approximately 58\% annually. The net Sharpe advantage persists at 0.1--0.3\%
 per-turnover costs but would erode at costs above $\approx$0.5\%.
-Market impact costs (price pressure from large trades) are not modeled.
+Price-impact costs from large trades are not modeled.
 
 \paragraph{Single market, single algorithm.}
 The EID scoring system, regulatory environment, and market microstructure
